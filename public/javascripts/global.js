@@ -39,7 +39,7 @@ $(document).ready(function () {
     }
   });
   // Add User button click
-  $('#btnAddUser').on('click', addUser);
+  $('#btnAddStudent').on('click', addStudent);
 
   // Delete User link click
   $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
@@ -179,6 +179,7 @@ function populateStudent(studentName) {
       tableContent += '<td>' + this.dob + '</td>';
 
       var enrolledCount = 0;
+      if (this.enrolled !== undefined ) {
       $.each(this.enrolled, function () {
         var thisEnroll = [];
         thisEnroll = this;
@@ -196,8 +197,15 @@ function populateStudent(studentName) {
           enrolledCount++;
         }
       });
+    } else {
+      tableContent += '<td>--</td><td>--</td><td>--</td><td>--</td>';
+      tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+          tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td><a href="#" class="enrollStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+    }
       tableContent += '</tr>';
     });
+    
     $('#studentList table tbody').html(tableContent);
   });
 }
@@ -275,7 +283,56 @@ function populateDept() {
 }
 ;
 
+// Add User
+function addStudent(event) {
+  event.preventDefault();
+  // Super basic validation - increase errorCount variable if any fields are blank
+  var errorCount = 0;
+  $('#studentAdd input').each(function (index, val) {
+    if ($(this).val() === '') {
+      errorCount++;
+    }
+  });
+  // Check and make sure errorCount's still at zero
+  if (errorCount === 0) {
 
+    // If it is, compile all user info into one object
+    var newUser = {
+      'studentID': $('#studentAdd fieldset input#studentIDName').val(),
+      'studentName': $('#studentAdd fieldset input#studentName').val(),
+      'dob': $('#studentAdd fieldset input#studentDOB').val()
+      
+    }
+
+    // Use AJAX to post the object to our adduser service
+    $.ajax({
+      type: 'POST',
+      data: newUser,
+      url: '/courses/addStudent',
+      dataType: 'JSON'
+    }).done(function (response) {
+
+      // Check for successful (blank) response
+      if (response.msg === '') {
+
+        // Clear the form inputs
+        $('#studentAdd fieldset input').val('');
+        // Update the table
+         closeOverlay('studentAdd');
+        populateStudent();
+      } else {
+
+        // If something goes wrong, alert the error message that our service returned
+        alert('Error: ' + response.msg);
+      }
+    });
+  } else {
+    // If errorCount is more than 0, error out
+    alert('Please fill in all fields');
+    return false;
+  }
+}
+;
 
 
 // Show User Info

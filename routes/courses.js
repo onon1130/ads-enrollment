@@ -44,6 +44,15 @@ router.get('/deptlist', function (req, res) {
   });
 });
 
-
+/* POST to adduser. */
+router.post('/addStudent', function (req, res) {
+  var db = req.db;
+  var collection = db.get('student');
+  collection.insert(req.body, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
 module.exports = router;
 

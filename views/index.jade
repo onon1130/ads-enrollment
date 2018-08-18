@@ -51,7 +51,7 @@ block content
       #studentList.listPanel
         .filter
           .actionBar
-            a#addStudent(href="#")
+            a#addStudent(href="#", class="overlayLink", data-overlay="studentAdd")
               span(class="glyphicon glyphicon-plus")
               span Add Student
           .filterBlock
@@ -117,4 +117,18 @@ block content
           th Enrolled Date
           th 
         tbody
+  // /OVERLAY STUDENT ENROLLED LIST
+  // OVERLAY STUDENT ENROLLED LIST
+  #studentAdd.overlay-black.overlay
+    .overlay-black-box
+      a.closeOverlay(href="#") 
+        span(class="glyphicon glyphicon-remove-circle")
+        span Close
+      fieldset
+        input#studentID(type='text', placeholder='Student ID')
+        input#studentName(type='text', placeholder='Student Name')
+        input#studentDOB(type='text', placeholder='Date of Birth')
+        
+        br
+        button#btnAddStudent Add Student
   // /OVERLAY STUDENT ENROLLED LIST
