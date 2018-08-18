@@ -1,0 +1,79 @@
+{
+  "_id": 0,
+  "CourseID": "CS101", 
+  "courseTitle": "Introduction to Data Science",
+  "courseLevel": "6",
+  "dept": { 
+    "deptID": "CS", 
+    "deptName": "Computer Science", 
+    "location": "Green Zone" 
+  },
+  "offer": { 
+    "year": 2016, 
+    "classSize": 40, 
+    "available": 38, 
+    "enrolled": [
+      {
+        "studentID": "15101010",
+        "enrolDate": {
+          "$date": "2016-05-15T00:00:00.000Z"
+        }
+      },
+      {
+        "studentID": "17130233",
+        "enrolDate": {
+          "$date": "2016-05-10T00:00:00.000Z"
+        }
+      }
+    ]
+  }
+}
+{ 
+"_id": 1,
+        "CourseID": "CS102", 
+        "courseTitle": "Introduction to Database",
+        "courseLevel": "5",
+        "dept": { 
+        "deptID": "CS", 
+                "deptName": "Computer Science", 
+                "location": "Green Zone" 
+        },
+        "offer": { 
+        "year": 2016, 
+                "classSize": 40, 
+                "available": 40, 
+                "enrolled": [
+
+                ]
+        }
+}
+{
+"_id": 3,
+        "CourseID": "CS103", 
+        "courseTitle": "Database Management",
+        "courseLevel": "6",
+        "dept": { 
+        "deptID": "CS", 
+                "deptName": "Computer Science", 
+                "location": "Green Zone" 
+        },
+        "offer": { 
+        "year": 2016, 
+                "classSize": 40, 
+                "available": 38, 
+                "enrolled": [
+                {
+                "studentID": "15101010",
+                        "enrolDate": {
+                        "$date": "2016-05-15T01:00:00.000Z"
+                        }
+                },
+                {
+                "studentID": "17130233",
+                        "enrolDate": {
+                        "$date": "2016-05-15T10:00:00.000Z"
+                        }
+                }
+                ]
+        }
+}

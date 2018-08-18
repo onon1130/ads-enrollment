@@ -2,53 +2,89 @@ extends layout
 
 block content
   h1= title
-  p Welcome to our test
-
   // Wrapper
   #wrapper
+    ul(class="nav nav-tabs list-tabs")
+      li(role="presentation" class="active")
+        a#show-course-list(href="#", data-list-id="courseList") Course List
+      li(role="presentation")
+        a#show-student-list(href="#", data-list-id="studentList") Student List
+      li(role="presentation")
+        a#show-dept-list(href="#", data-list-id="deptList") Department List
+        
+    // COURSE LIST
+    #courseList.listPanel
+      .filter
+        .filterBlock
+          span Year:
+          select(id="course-year")
+              option(value="all", selected="selected") All
+              option(value="2016") 2016
+              option(value="2017") 2017
+        .filterBlock
+          span Department:
+          select(id="course-dept")
+              option(value="all", selected="selected") All
+              option(value="CS") Computer Science
+              option(value="IS") Information System
 
-    // USER INFO
-    #userInfo
-      h2 User Info
-      p
-        strong Name:
-        |  <span id='userInfoName' class='testing'></span>
-        br
-        strong Age:
-        |  <span id='userInfoAge'></span>
-        br
-        strong Gender:
-        |  <span id='userInfoGender'></span>
-        br
-        strong Location:
-        |  <span id='userInfoLocation'></span>
-    // /USER INFO
-
-    // USER LIST
-    h2 User List
-    #userList
-      table
+      table.table
         thead
-          th UserName
-          th Email
-          th Delete?
+          th ID
+          th Course
+          th Level
+          th Year
+          th Dept
+          th Enrolled
+          th Vancancy
+          th(colspan="3")
         tbody
-    // /USER LIST
+    // /COURSE LIST
+     
+    // STUDENT LIST
+    #studentList.listPanel
+      .filter
+        .filterBlock
+          span Year:
+          select(id="student-course-year")
+              option(value="all", selected="selected") All
+              option(value="2016") 2016
+              option(value="2017") 2017
+        .filterBlock
+          span Department:
+          select(id="student-course-dept")
+              option(value="all", selected="selected") All
+              option(value="CS") Computer Science
+              option(value="IS") Information System
+        .filterBlock
+          span Student Name:
+          input#student-name(type="text")
+          button#student-filter-trigger(type="button") Apply
 
-    // ADD USER
-    h2 Add User
-    #addUser
-      fieldset
-        input#inputUserName(type='text', placeholder='Username')
-        input#inputUserEmail(type='text', placeholder='Email')
-        br
-        input#inputUserFullname(type='text', placeholder='Full Name')
-        input#inputUserAge(type='text', placeholder='Age')
-        br
-        input#inputUserLocation(type='text', placeholder='Location')
-        input#inputUserGender(type='text', placeholder='gender')
-        br
-        button#btnAddUser Add User
-    // /ADD USER
+      table.table
+        thead
+          th ID
+          th Student
+          th DOB
+          th Enrolled Course
+          th Dept
+          th Year
+          th Enrolled Date
+          th(colspan="3")
+        tbody
+    // /STUDENT LIST
+
+    // DEPT LIST
+    #deptList.listPanel
+      
+      table.table
+        thead
+          th ID
+          th Course
+          th Loaction
+          th(colspan="3")
+        tbody
+    // /DEPT LIST
+    
 
   // /WRAPPER

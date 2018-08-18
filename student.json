@@ -1,0 +1,48 @@
+{ 
+  "_id": 0,
+  "studentID": "15101010", 
+  "studentName": "Chan Tai Man",
+  "dob": {
+    "$date": "2009-08-10T00:00:00.000Z"
+  },
+  "enrolled": [
+    {
+      "CourseID": "CS101",
+      "year": "2016",
+      "enrolDate": {
+        "$date": "2016-05-15T00:00:00.000Z"
+      }
+    },
+    {
+      "CourseID": "CS103",
+      "year": "2016",
+      "enrolDate": {
+        "$date": "2016-05-15T01:00:00.000Z"
+      }
+    }
+  ]
+}
+{ 
+"_id" : 1, 
+        "studentID" : "17130233", 
+        "studentName" : "Cheung Siu Ming",
+        "dob": {
+        "$date": "2009-12-24T00:00:00.000Z"
+        },
+        "enrolled": [
+        {
+        "CourseID": "CS101",
+                "year": "2016",
+                "enrolDate": {
+                "$date": "2016-05-10T00:00:00.000Z"
+                }
+        },
+    {
+      "CourseID": "CS103",
+      "year": "2016",
+      "enrolDate": {
+        "$date": "2016-05-15T10:00:00.000Z"
+      }
+    }
+        ]
+}

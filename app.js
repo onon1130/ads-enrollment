@@ -13,6 +13,7 @@ var db = monk('localhost:27017/enrolment');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var coursesRouter = require('./routes/courses');
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/dist/fonts'));
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 // Make our db accessible to our router
 app.use(function(req,res,next){
@@ -36,7 +38,7 @@ app.use(function(req,res,next){
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/courses', coursesRouter);
 
 
 // catch 404 and forward to error handler

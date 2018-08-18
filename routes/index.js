@@ -6,10 +6,12 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Enrolment' });
 });
 
-/* GET Hello World page. */
+///* GET Hello World page. */
 router.get('/helloworld', function(req, res) {
     res.render('helloworld', { title: 'Hello, World!' });
 });
+
+
 /* GET Userlist page. */
 router.get('/userlist', function(req, res) {
     var db = req.db;
