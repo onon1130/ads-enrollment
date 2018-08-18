@@ -32,6 +32,8 @@ router.post('/studentlist', function (req, res) {
   });
 });
 
+
+
 /* GET deptlist. */
 
 router.get('/deptlist', function (req, res) {

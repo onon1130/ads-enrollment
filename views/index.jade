@@ -1,90 +1,120 @@
 extends layout
 
 block content
-  h1= title
-  // Wrapper
-  #wrapper
-    ul(class="nav nav-tabs list-tabs")
-      li(role="presentation" class="active")
-        a#show-course-list(href="#", data-list-id="courseList") Course List
-      li(role="presentation")
-        a#show-student-list(href="#", data-list-id="studentList") Student List
-      li(role="presentation")
-        a#show-dept-list(href="#", data-list-id="deptList") Department List
-        
-    // COURSE LIST
-    #courseList.listPanel
-      .filter
-        .filterBlock
-          span Year:
-          select(id="course-year")
-              option(value="all", selected="selected") All
-              option(value="2016") 2016
-              option(value="2017") 2017
-        .filterBlock
-          span Department:
-          select(id="course-dept")
-              option(value="all", selected="selected") All
-              option(value="CS") Computer Science
-              option(value="IS") Information System
+  .container
+    h1= title
+    // Wrapper
+    #wrapper
+      ul(class="nav nav-tabs list-tabs")
+        li(role="presentation" class="active")
+          a#show-course-list(href="#", data-list-id="courseList") Course List
+        li(role="presentation")
+          a#show-student-list(href="#", data-list-id="studentList") Student List
+        li(role="presentation")
+          a#show-dept-list(href="#", data-list-id="deptList") Department List
 
+      // COURSE LIST
+      #courseList.listPanel
+
+        .filter
+          .actionBar
+            a#addCourse(href="#")
+              span(class="glyphicon glyphicon-plus")
+              span Add Course
+          .filterBlock
+            span Year:
+            select(id="course-year")
+                option(value="all", selected="selected") All
+                option(value="2016") 2016
+                option(value="2017") 2017
+          .filterBlock
+            span Department:
+            select(id="course-dept")
+                option(value="all", selected="selected") All
+                option(value="CS") Computer Science
+                option(value="IS") Information System
+
+        table.table
+          thead
+            th ID
+            th Course
+            th Level
+            th Year
+            th Dept
+            th Enrolled
+            th Vancancy
+            th(colspan="3")
+          tbody
+      // /COURSE LIST
+
+      // STUDENT LIST
+      #studentList.listPanel
+        .filter
+          .actionBar
+            a#addStudent(href="#")
+              span(class="glyphicon glyphicon-plus")
+              span Add Student
+          .filterBlock
+            span Year:
+            select(id="student-course-year")
+                option(value="all", selected="selected") All
+                option(value="2016") 2016
+                option(value="2017") 2017
+          .filterBlock
+            span Department:
+            select(id="student-course-dept")
+                option(value="all", selected="selected") All
+                option(value="CS") Computer Science
+                option(value="IS") Information System
+          .filterBlock
+            span Student Name:
+            input#student-name(type="text")
+            button#student-filter-trigger(type="button") Apply
+
+        table.table
+          thead
+            th ID
+            th Student
+            th DOB
+            th Enrolled Course
+            th Dept
+            th Year
+            th Enrolled Date
+            th(colspan="3")
+          tbody
+      // /STUDENT LIST
+
+      // DEPT LIST
+      #deptList.listPanel
+        .filter
+          .actionBar
+            a#addDept(href="#")
+              span(class="glyphicon glyphicon-plus")
+              span Add Department
+        table.table
+          thead
+            th ID
+            th Course
+            th Loaction
+            th(colspan="3")
+          tbody
+      // /DEPT LIST
+
+
+
+    // /WRAPPER
+   
+  // OVERLAY STUDENT ENROLLED LIST
+  #studentEnrolled.overlay-black.overlay
+    .overlay-black-box
+      a.closeOverlay(href="#") 
+        span(class="glyphicon glyphicon-remove-circle")
+        span Close
       table.table
         thead
-          th ID
-          th Course
-          th Level
-          th Year
-          th Dept
-          th Enrolled
-          th Vancancy
-          th(colspan="3")
-        tbody
-    // /COURSE LIST
-     
-    // STUDENT LIST
-    #studentList.listPanel
-      .filter
-        .filterBlock
-          span Year:
-          select(id="student-course-year")
-              option(value="all", selected="selected") All
-              option(value="2016") 2016
-              option(value="2017") 2017
-        .filterBlock
-          span Department:
-          select(id="student-course-dept")
-              option(value="all", selected="selected") All
-              option(value="CS") Computer Science
-              option(value="IS") Information System
-        .filterBlock
-          span Student Name:
-          input#student-name(type="text")
-          button#student-filter-trigger(type="button") Apply
-
-      table.table
-        thead
-          th ID
-          th Student
-          th DOB
-          th Enrolled Course
-          th Dept
-          th Year
+          th Student ID
+          th Student Name
           th Enrolled Date
-          th(colspan="3")
+          th 
         tbody
-    // /STUDENT LIST
-
-    // DEPT LIST
-    #deptList.listPanel
-      
-      table.table
-        thead
-          th ID
-          th Course
-          th Loaction
-          th(colspan="3")
-        tbody
-    // /DEPT LIST
-    
-
-  // /WRAPPER
+  // /OVERLAY STUDENT ENROLLED LIST

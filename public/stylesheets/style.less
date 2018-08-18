@@ -1,6 +1,6 @@
 #wrapper {
- // padding-left:312px;
- // position:relative;
+  // padding-left:312px;
+  // position:relative;
 }
 #studentList, #deptList {
   display: none;
@@ -8,10 +8,11 @@
 .list-tabs {
   margin-bottom: 20px;
 }
+
 .filter {
   padding: 10px 0 20px;
   clear: both;
-  height: 60px;
+  height: 50px;
   margin-bottom: 10px;
   border-bottom: 1px dashed #c6c2c1;
   .filterBlock {
@@ -26,7 +27,66 @@
     }
   }
 }
-.userList, .courseList {
+.actionBar {
+  display: block;
+  float: left;
+  padding-left: 5px;
+  padding-right: 20px;
+  height: 20px;
+  border-right: 1px solid #c6c2c1;
+  margin-right: 20px;
+  a {
+    span {
+      padding-right: 5px;
+    }
+  }
+  #deptList & {
+    border-right: none;
+  }
+}
+
+.overlay-black {
+  display:none;
+  background:transparent;
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#7F000000,endColorstr=#7F000000);
+  zoom: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  &:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    margin-right: -0.25em;
+    vertical-align: middle;
+  }
+  
+  .overlay-black-box {
+    background-color: #FFFFFF;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 25px;
+    margin: 0 40px;
+    width: 80%;
+    min-height: 300px;
+    
+
+  }
+
+  .closeOverlay {
+    display: block;
+    float: right;
+    clear: both;
+  }
+
+  
+}
+
+/*.userList, .courseList {
   margin:0 0 30px 0;
   table {
     border-collapse:separate;
@@ -49,7 +109,7 @@
       text-align:center;
     }
   }
-}
+}*/
 #userInfo {
   width:250px;
   position:absolute;
