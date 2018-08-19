@@ -39,7 +39,15 @@ $(document).ready(function () {
     }
   });
   // Add User button click
-  $('#btnAddStudent').on('click', addStudent);
+  $(document.body).on('click','#btnAddStudent', addStudent);
+  
+  // Add User button click
+  $(document.body).on('click', '.courseEnroll', function (e) {
+    var courseID = $(this).attr('data-courseID');
+    var year = $(this).attr('data-offer-year');
+    addStudent(courseID,year,true);
+  });
+  
 
   // Delete User link click
   $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
@@ -112,6 +120,9 @@ function populateCourse() {
       tableContent += '<td>' + this.level + '</td>';
       tableContent += '<td>' + this.dept.deptName + '</td>';
       var offerCount = 0;
+      var thisTitle=this.title;
+      var thisDeptID=this.dept.deptID;
+      var thisDeptName=this.dept.deptName;
       $.each(this.offer, function () {
         var thisOffer = [];
         thisOffer = this;
@@ -124,7 +135,7 @@ function populateCourse() {
           tableContent += '<td>' + thisOffer.available + '/' + thisOffer.classSize + '</td>';
           tableContent += '<td><a href="#" class="updateCourse"  data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
           tableContent += '<td><a href="#" class="deleteCourse" data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-          tableContent += '<td><a href="#" class="enrollCourse" data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+          tableContent += '<td><a href="#" class="enrollCourse overlay-black courseEnroll" data-overlay="studentAdd" data-offer-year="' + thisOffer.year + ' data-dept-name"' + thisDeptName  + ' data-dept-id"' + thisDeptID + ' " data-courseID="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
           offerCount++;
         }
       });
@@ -284,8 +295,13 @@ function populateDept() {
 ;
 
 // Add User
-function addStudent(event) {
-  event.preventDefault();
+function addStudent(courseID,year,enrollCourse) {
+  
+  if (enrollCourse) {
+    
+    
+    
+  }
   // Super basic validation - increase errorCount variable if any fields are blank
   var errorCount = 0;
   $('#studentAdd input').each(function (index, val) {
