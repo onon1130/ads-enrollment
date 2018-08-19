@@ -97,7 +97,7 @@ router.post('/enrollCourse', function (req, res) {
               {"studentID": studentID,
                   "enrolDate": newEnrollDate}},
     $inc: {"offer.$.available": -1}};
-  collection.update(findQuery, updateQuery, function (err, result) {
+    collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
     );
@@ -144,6 +144,36 @@ router.post('/updateStudent', function (req, res) {
     );
   });
 });
-
+/* POST to batch update student. */
+router.post('/batchUpdateStudent', function (req, res) {
+  var db = req.db;
+  var collection = db.get('student');
+  var findQuery = {};
+  var updateQuery = {};
+  var getQuery = req.body;
+  var studentID = getQuery.studentID;
+  var courseID = getQuery.courseID;
+  var deptName = getQuery.deptName;
+  var courseTitle = getQuery.title;
+  var year = getQuery.year;
+  var newEnrollDate = getQuery.enrolDate;
+  var deptID = getQuery.deptID;
+  var findQuery = {"studentID": studentID};
+  //{"dept.deptID":{$in:["CS","IS"]}})
+  var updateQuery = {$push: {"enrolled": {
+        "CourseID": courseID,
+        "deptName": deptName,
+        "title": courseTitle,
+        "year": year,
+        "enrolDate": newEnrollDate,
+        "deptID": deptID
+        
+  } }};
+  collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
 module.exports = router;
 

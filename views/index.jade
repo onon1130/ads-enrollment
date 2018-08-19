@@ -76,6 +76,8 @@ block content
             th ID
             th Student
             th DOB
+            th 
+            th 
             th Enrolled Course
             th Dept
             th Year
@@ -118,17 +120,70 @@ block content
           th 
         tbody
   // /OVERLAY STUDENT ENROLLED LIST
-  // OVERLAY STUDENT ENROLLED LIST
+  // ADD STUDENT ENROLLED LIST
   #studentAdd.overlay-black.overlay
     .overlay-black-box
       a.closeOverlay(href="#") 
         span(class="glyphicon glyphicon-remove-circle")
         span Close
-      fieldset
-        input#studentID(type='text', placeholder='Student ID')
-        input#studentName(type='text', placeholder='Student Name')
-        input#studentDOB(type='text', placeholder='Date of Birth')
+      fieldset.add
+        span
+          input#studentID(type='text', placeholder='Student ID')
+        span
+          input#studentName(type='text', placeholder='Student Name')
+        span
+          input#studentDOB(type='text', placeholder='Date of Birth')
         
         br
+       span
         button#btnAddStudent Add Student
-  // /OVERLAY STUDENT ENROLLED LIST
+  // /ADD STUDENT ENROLLED LIST
+   
+  // Select STUDENT ENROLLED LIST
+  #studentEnroll.overlay-black.overlay
+    .overlay-black-box
+      a.closeOverlay(href="#") 
+        span(class="glyphicon glyphicon-remove-circle")
+        span Close
+      h3#enrollTitle Enroll for 
+        span.courseID
+        span -
+        span.courseTitle
+        br
+        span.deptName
+        span (
+        span.year
+        span )
+
+
+      fieldset(style="display:none")
+        input#currentStudent(type="radio", value="N", name="newStudent", checked="checked") 
+        label(for="currentStudent") Current
+        input#newStudent(type="radio", value="Y", name="newStudent")
+        label(for="newStudent") New
+      fieldset.search#searchStudentForm
+        span
+          input#searchStudentID(type='text', placeholder='Student ID')
+        span
+          input#searchStudentName(type='text', placeholder='Student Name')
+        span
+          button#btnSearchStudent Search
+      #searchStudentResult
+        table.table
+          thead
+            th Student ID
+            th Student Name
+            th DOB
+            th 
+          tbody  
+        
+      fieldset#newStudentForm
+        input#newStudentID(type='text', placeholder='Student ID')
+        input#newStudentName(type='text', placeholder='Student Name')
+        input#newStudentDOB(type='text', placeholder='Date of Birth')
+      
+        br
+        button#btnAddStudent Add Student
+      
+  // /Select STUDENT ENROLLED LIST
+   
