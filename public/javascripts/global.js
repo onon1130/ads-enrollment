@@ -39,15 +39,56 @@ $(document).ready(function () {
     }
   });
   // Add User button click
-  $(document.body).on('click','#btnAddStudent', addStudent);
-  
+  $(document.body).on('click', '#btnAddStudent', addStudent);
+
   // Add User button click
-  $(document.body).on('click', '.courseEnroll', function (e) {
+  $(document.body).on('click', 'a.courseEnroll', function (e) {
+    e.preventDefault();
+
+    var courseID = $(this).attr('data-courseID');
+    var courseTitle = $(this).attr('data-course-title');
+    var year = $(this).attr('data-offer-year');
+    var deptName = $(this).attr('data-dept-name');
+    var deptID = $(this).attr('data-dept-id');
+    var courseObjectID = $(this).attr('data-obj-id');
+    console.log('enroll!');
+    $('#studentAdd').attr('data-enroll', true)
+            .attr('data-courseID', courseID)
+            .attr('data-course-title', courseTitle)
+            .attr('data-offer-year', year)
+            .attr('data-dept-name', deptName)
+            .attr('data-dept-id', deptID)
+            .attr('data-obj-id', courseObjectID);
+
+    overlay("studentAdd");
+    //addStudent(courseID, courseTitle, courseObjectID, deptID, deptName, year, true);
+  });
+  $(document.body).on('click', 'a.unEnrollCourse', function (e) {
+    e.preventDefault();
     var courseID = $(this).attr('data-courseID');
     var year = $(this).attr('data-offer-year');
-    addStudent(courseID,year,true);
+    var studentID = $(this).attr('data-studentID');
+    console.log('unenroll!');
+
+    var confirmation = confirm('Are you sure you want to unenroll this student?');
+    if (confirmation === true) {
+      unEnrollStudent(studentID, courseID, year);
+      // unEnroll(courseID, studentID, year);
+
+    } else {
+
+      // If they said no to the confirm, do nothing
+      return false;
+    }
+
+
+
+
+
   });
-  
+
+
+
 
   // Delete User link click
   $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
@@ -120,22 +161,30 @@ function populateCourse() {
       tableContent += '<td>' + this.level + '</td>';
       tableContent += '<td>' + this.dept.deptName + '</td>';
       var offerCount = 0;
-      var thisTitle=this.title;
-      var thisDeptID=this.dept.deptID;
-      var thisDeptName=this.dept.deptName;
+      var thisTitle = this.title;
+      var thisDeptID = this.dept.deptID;
+      var thisDeptName = this.dept.deptName;
+
       $.each(this.offer, function () {
         var thisOffer = [];
         thisOffer = this;
+        var enrolledStudent;
+        enrolledStudent = 0;
+        if (thisOffer.enrolled) {
+          enrolledStudent = thisOffer.enrolled.length;
+        }
+        ;
+
         if (thisOffer.year === year || $('#course-year').val() === 'all') {
           if (offerCount > 0) {
             tableContent += '</tr><tr><td colspan="4"></td>';
           }
           tableContent += '<td>' + thisOffer.year + '</td>';
-          tableContent += '<td><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + thisOffer.enrolled.length + '</a></td>';
+          tableContent += '<td><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + enrolledStudent + '</a></td>';
           tableContent += '<td>' + thisOffer.available + '/' + thisOffer.classSize + '</td>';
-          tableContent += '<td><a href="#" class="updateCourse"  data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-          tableContent += '<td><a href="#" class="deleteCourse" data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-          tableContent += '<td><a href="#" class="enrollCourse overlay-black courseEnroll" data-overlay="studentAdd" data-offer-year="' + thisOffer.year + ' data-dept-name"' + thisDeptName  + ' data-dept-id"' + thisDeptID + ' " data-courseID="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+          tableContent += '<td><a href="#" class="courseUpdate"  data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+          tableContent += '<td><a href="#" class="courseDelete" data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+          tableContent += '<td><a href="#" class="courseEnroll" data-course-title="' + thisTitle + '" data-offer-year="' + thisOffer.year + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
           offerCount++;
         }
       });
@@ -145,7 +194,6 @@ function populateCourse() {
   });
 }
 ;
-
 
 function populateStudent(studentName) {
 // Empty content string
@@ -190,33 +238,33 @@ function populateStudent(studentName) {
       tableContent += '<td>' + this.dob + '</td>';
 
       var enrolledCount = 0;
-      if (this.enrolled !== undefined ) {
-      $.each(this.enrolled, function () {
-        var thisEnroll = [];
-        thisEnroll = this;
-        if ((thisEnroll.year === year || year === 'all') && (thisEnroll.deptID === deptID || deptID === 'all')) {
-          if (enrolledCount > 0) {
-            tableContent += '</tr><tr><td colspan="3"></td>';
+      if (this.enrolled !== undefined) {
+        $.each(this.enrolled, function () {
+          var thisEnroll = [];
+          thisEnroll = this;
+          if ((thisEnroll.year === year || year === 'all') && (thisEnroll.deptID === deptID || deptID === 'all')) {
+            if (enrolledCount > 0) {
+              tableContent += '</tr><tr><td colspan="3"></td>';
+            }
+            tableContent += '<td>' + thisEnroll.title + '</td>';
+            tableContent += '<td>' + thisEnroll.deptName + '</td>';
+            tableContent += '<td>' + thisEnroll.year + '</td>';
+            tableContent += '<td>' + thisEnroll.enrolDate + '</td>';
+            tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+            tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+            tableContent += '<td><a href="#" class="enrollStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+            enrolledCount++;
           }
-          tableContent += '<td>' + thisEnroll.title + '</td>';
-          tableContent += '<td>' + thisEnroll.deptName + '</td>';
-          tableContent += '<td>' + thisEnroll.year + '</td>';
-          tableContent += '<td>' + thisEnroll.enrolDate + '</td>';
-          tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-          tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-          tableContent += '<td><a href="#" class="enrollStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
-          enrolledCount++;
-        }
-      });
-    } else {
-      tableContent += '<td>--</td><td>--</td><td>--</td><td>--</td>';
-      tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-          tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-      tableContent += '<td><a href="#" class="enrollStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
-    }
+        });
+      } else {
+        tableContent += '<td>--</td><td>--</td><td>--</td><td>--</td>';
+        tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+        tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+        tableContent += '<td><a href="#" class="enrollStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+      }
       tableContent += '</tr>';
     });
-    
+
     $('#studentList table tbody').html(tableContent);
   });
 }
@@ -253,16 +301,7 @@ function populateEnrolledStudent(enrolledCourseID, year) {
         }
       });
 
-      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
-
-
-
-
-
-
-
-
-
+      tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + this.studentID + '" data-courseID="' + enrolledCourseID + '" data-offer-year="' + year + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Unenroll</a></td>';
       tableContent += '</tr>';
     });
     $('#studentEnrolled table tbody').html(tableContent);
@@ -293,15 +332,31 @@ function populateDept() {
   });
 }
 ;
-
 // Add User
-function addStudent(courseID,year,enrollCourse) {
-  
-  if (enrollCourse) {
-    
-    
-    
+function addStudent() {
+  console.log('add student!!');
+  var enrollCourse;
+  enrollCourse = false;
+  if ($('#studentAdd').attr('data-enroll') !== '' && typeof $('#studentAdd').attr('data-enroll') !== 'undefined') {
+    enrollCourse = true;
+    var courseID = $('#studentAdd').attr('data-courseID');
+    var courseTitle = $('#studentAdd').attr('data-course-title');
+    var year = $('#studentAdd').attr('data-offer-year');
+    var deptName = $('#studentAdd').attr('data-dept-name');
+    var deptID = $('#studentAdd').attr('data-dept-id');
+    var courseObjectID = $('#studentAdd').attr('data-obj-id');
+  } else {
+    enrollCourse = false;
   }
+  $('#studentAdd').removeAttr('data-enroll')
+          .removeAttr('data-courseID')
+          .removeAttr('data-course-title')
+          .removeAttr('data-offer-year')
+          .removeAttr('data-dept-name')
+          .removeAttr('data-dept-id')
+          .removeAttr('data-obj-id');
+
+  var newUser = {};
   // Super basic validation - increase errorCount variable if any fields are blank
   var errorCount = 0;
   $('#studentAdd input').each(function (index, val) {
@@ -311,35 +366,89 @@ function addStudent(courseID,year,enrollCourse) {
   });
   // Check and make sure errorCount's still at zero
   if (errorCount === 0) {
-
-    // If it is, compile all user info into one object
-    var newUser = {
-      'studentID': $('#studentAdd fieldset input#studentIDName').val(),
-      'studentName': $('#studentAdd fieldset input#studentName').val(),
-      'dob': $('#studentAdd fieldset input#studentDOB').val()
-      
+    var studentSuccess;
+    var enrollSuccess;
+    enrollSuccess = false;
+    studentSuccess = false;
+    // new student info 
+    var studentID = $('#studentAdd fieldset input#studentID').val();
+    var studentName = $('#studentAdd fieldset input#studentName').val();
+    var dob = $('#studentAdd fieldset input#studentDOB').val();
+    var newUserInfo = {
+      'studentID': studentID,
+      'studentName': studentName,
+      'dob': dob
+    };
+    newUser = newUserInfo;
+    // for new enrollment
+    if (enrollCourse) {
+      var newEnrollDate = new Date();
+      var enrollInfo = {"studentID": studentID,
+        "studentName": studentName,
+        "dob": dob,
+        "courseID": courseID,
+        "deptName": deptName,
+        "title": courseTitle,
+        "year": year,
+        "enrolDate": newEnrollDate,
+        "deptID": deptID,
+        "enrolledCourseID": courseObjectID
+      };
+      newUser = enrollInfo;
     }
-
-    // Use AJAX to post the object to our adduser service
+    // add student
     $.ajax({
       type: 'POST',
       data: newUser,
       url: '/courses/addStudent',
       dataType: 'JSON'
     }).done(function (response) {
-
       // Check for successful (blank) response
       if (response.msg === '') {
-
-        // Clear the form inputs
-        $('#studentAdd fieldset input').val('');
-        // Update the table
-         closeOverlay('studentAdd');
-        populateStudent();
+        studentSuccess = true;
+      }
+      // update course
+      if (enrollCourse && studentSuccess) {
+        console.log('enter enroll update');
+        var updateQuery = {
+          "courseID": courseID,
+          "year": year,
+          "studentID": studentID,
+          "enrolDate": newEnrollDate
+        };
+        $.ajax({
+          type: 'POST',
+          data: updateQuery,
+          url: '/courses/enrollCourse',
+          dataType: 'JSON'
+        }).done(function (responseEnrol) {
+          // Check for successful (blank) response
+          if (responseEnrol.msg === '') {
+            enrollSuccess = true;
+          }
+          if (enrollSuccess) {
+            // reload page
+            populateCourse();
+            // Clear the form inputs
+            $('#studentAdd fieldset input').val('');
+            // Update the table
+            closeOverlay('studentAdd');
+          } else {
+            alert('Error: ' + responseEnrol.msg);
+          }
+        });
       } else {
-
-        // If something goes wrong, alert the error message that our service returned
-        alert('Error: ' + response.msg);
+        if (studentSuccess) {
+          // reload page
+          populateStudent();
+          // Clear the form inputs
+          $('#studentAdd fieldset input').val('');
+          // Update the table
+          closeOverlay('studentAdd');
+        } else {
+          console.log('why!!');
+          alert('Error: ' + response.msg);
+        }
       }
     });
   } else {
@@ -350,78 +459,63 @@ function addStudent(courseID,year,enrollCourse) {
 }
 ;
 
+function unEnrollStudent(studentID, courseID, year) {
+  var query = {
+    "studentID": studentID,
+    "courseID": courseID,
+    "year": year
+  };
+  $.ajax({
+    type: 'POST',
+    data: query,
+    url: '/courses/updateStudent',
+    dataType: 'JSON'
+  }).done(function (response) {
 
-// Show User Info
-function showUserInfo(event) {
+    if (response.msg === '') {
+      $.ajax({
+        type: 'POST',
+        data: query,
+        url: '/courses/unEnrollCourse',
+        dataType: 'JSON'
+      }).done(function (response2) {
 
-  // Prevent Link from Firing
-  event.preventDefault();
-  // Retrieve username from link rel attribute
-  var thisUserName = $(this).attr('rel');
-  // Get Index of object based on id value
-  var arrayPosition = userListData.map(function (arrayItem) {
-    return arrayItem.username;
-  }).indexOf(thisUserName);
-  // Get our User Object
-  var thisUserObject = userListData[arrayPosition];
-  //Populate Info Box
-  $('#userInfoName').text(thisUserObject.fullname);
-  $('#userInfoAge').text(thisUserObject.age);
-  $('#userInfoGender').text(thisUserObject.gender);
-  $('#userInfoLocation').text(thisUserObject.location);
-}
-;
-// Add User
-function addUser(event) {
-  event.preventDefault();
-  // Super basic validation - increase errorCount variable if any fields are blank
-  var errorCount = 0;
-  $('#addUser input').each(function (index, val) {
-    if ($(this).val() === '') {
-      errorCount++;
+        if (response2.msg === '') {
+          populateCourse();
+          closeOverlay();
+        } else {
+          alert('course unenroll Error: ' + response2.msg);
+        }
+      });
+    } else {
+      alert(' student unenroll Error: ' + response.msg);
     }
   });
-  // Check and make sure errorCount's still at zero
-  if (errorCount === 0) {
 
-    // If it is, compile all user info into one object
-    var newUser = {
-      'username': $('#addUser fieldset input#inputUserName').val(),
-      'email': $('#addUser fieldset input#inputUserEmail').val(),
-      'fullname': $('#addUser fieldset input#inputUserFullname').val(),
-      'age': $('#addUser fieldset input#inputUserAge').val(),
-      'location': $('#addUser fieldset input#inputUserLocation').val(),
-      'gender': $('#addUser fieldset input#inputUserGender').val()
-    }
 
-    // Use AJAX to post the object to our adduser service
-    $.ajax({
-      type: 'POST',
-      data: newUser,
-      url: '/users/adduser',
-      dataType: 'JSON'
-    }).done(function (response) {
 
-      // Check for successful (blank) response
-      if (response.msg === '') {
-
-        // Clear the form inputs
-        $('#addUser fieldset input').val('');
-        // Update the table
-        populateTable();
-      } else {
-
-        // If something goes wrong, alert the error message that our service returned
-        alert('Error: ' + response.msg);
-      }
-    });
-  } else {
-    // If errorCount is more than 0, error out
-    alert('Please fill in all fields');
-    return false;
-  }
 }
 ;
+//// Show User Info
+//function showUserInfo(event) {
+//  // Prevent Link from Firing
+//  event.preventDefault();
+//  // Retrieve username from link rel attribute
+//  var thisUserName = $(this).attr('rel');
+//  // Get Index of object based on id value
+//  var arrayPosition = userListData.map(function (arrayItem) {
+//    return arrayItem.username;
+//  }).indexOf(thisUserName);
+//  // Get our User Object
+//  var thisUserObject = userListData[arrayPosition];
+//  //Populate Info Box
+//  $('#userInfoName').text(thisUserObject.fullname);
+//  $('#userInfoAge').text(thisUserObject.age);
+//  $('#userInfoGender').text(thisUserObject.gender);
+//  $('#userInfoLocation').text(thisUserObject.location);
+//}
+//;
+
 // Delete User
 function deleteUser(event) {
 
@@ -454,17 +548,14 @@ function deleteUser(event) {
 
 }
 ;
-
-
 function closeOverlay(id, callback) {
+  $('html').css('overflow-y', 'auto');
   if (id === undefined || id === '') {
     $('.overlay').fadeOut();
-
     // mark the modal window as hidden
     $('.overlay').attr('aria-hidden', 'true');
   } else {
     $('#' + id).fadeOut();
-
     // mark the modal window as hidden
     $('#' + id).attr('aria-hidden', 'true');
   }

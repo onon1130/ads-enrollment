@@ -10,7 +10,6 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('localhost:27017/enrolment');
 
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var coursesRouter = require('./routes/courses');
