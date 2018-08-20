@@ -16,13 +16,12 @@ $(document).ready(function () {
     populateCourse();
   });
   $(document.body).on('click', '#student-filter-trigger', function (e) {
-    //console.log('student click!');
+    e.preventDefault();
     var studentName = $('#student-name').val();
     populateStudent(studentName);
   });
   $(document.body).on('click', '#btnSearchStudent', function (e) {
-    console.log('search click!');
-
+    e.preventDefault();
     var courseID = $('#studentEnroll').attr('data-courseID');
     var year = $('#studentEnroll').attr('data-offer-year');
     var studentName = $('#searchStudentName').val();
@@ -30,6 +29,7 @@ $(document).ready(function () {
     populateSearchStudent(studentName, studentID, courseID, year);
   });
   $(document.body).on('click', '.list-tabs a', function (e) {
+    e.preventDefault();
     if (!$(this).parent().hasClass('active')) {
       $('.list-tabs').find('li').removeClass('active');
       $(this).parent().addClass('active');
@@ -49,14 +49,17 @@ $(document).ready(function () {
   });
   //show hide new student form
   $(document.body).on('click', '#currentStudent', function (e) {
+    e.preventDefault();
     $('#newStudentForm').hide();
     $('#searchStudentForm').fadeIn();
   });
   $(document.body).on('click', '.studentEnrollCourse', function (e) {
+    e.preventDefault();
     var studentID = $(this).attr('data-studentID');
     enrollCurrentStudent(studentID);
   });
   $(document.body).on('click', '#newStudent', function (e) {
+    e.preventDefault();
     $('#searchStudentForm').hide();
     $('#newStudentForm').fadeIn();
   });
@@ -66,7 +69,6 @@ $(document).ready(function () {
   // Add User button click
   $(document.body).on('click', 'a.courseEnroll', function (e) {
     e.preventDefault();
-
     var courseID = $(this).attr('data-courseID');
     var courseTitle = $(this).attr('data-course-title');
     var year = $(this).attr('data-offer-year');
@@ -102,22 +104,12 @@ $(document).ready(function () {
     var confirmation = confirm('Are you sure you want to unenroll this student?');
     if (confirmation === true) {
       unEnrollStudent(studentID, courseID, year, fromStudent);
-      //   unEnroll(courseID, studentID, year);
 
     } else {
-
       // If they said no to the confirm, do nothing
       return false;
     }
-
-
-
-
-
   });
-
-
-
 
   // Delete User link click
   $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
@@ -131,10 +123,8 @@ $(document).ready(function () {
   });
 
   $(document.body).on('click', '.overlayLink', function (e) {
-
     var overlayTarget = $(this).attr('data-overlay');
     e.preventDefault();
-
     $(document).keyup(function (e) {
       if (e.keyCode === 27) {
         closeOverlay();
@@ -146,8 +136,6 @@ $(document).ready(function () {
     e.preventDefault();
     closeOverlay();
   });
-
-
 
 });
 
@@ -230,8 +218,6 @@ function populateStudent(studentName) {
   var query = {};
   var year;
   var deptID;
-  console.log('dept:' + $('#student-course-dept').val());
-  console.log('year:' + $('#student-course-year').val());
   year = $('#student-course-year').val();
   deptID = $('#student-course-dept').val();
   if (studentName === '' || studentName === '') {
@@ -280,14 +266,12 @@ function populateStudent(studentName) {
             tableContent += '<td>' + thisEnroll.deptName + '</td>';
             tableContent += '<td>' + thisEnroll.year + '</td>';
             tableContent += '<td>' + formatDate(thisEnroll.enrolDate) + '</td>';
-
-            tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + thisStudentID + '" data-courseID="' + thisEnroll.CourseID + '" data-offer-year="' + thisEnroll.year + '" data-from-student="true"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Unenroll</a></td>';
+            tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + thisStudentID + '" data-courseID="' + thisEnroll.CourseID + '" data-offer-year="' + thisEnroll.year + '" data-from-student="true"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
             enrolledCount++;
           }
         });
       } else {
         tableContent += '<td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>';
-
       }
       tableContent += '</tr>';
     });
@@ -362,9 +346,6 @@ function populateEnrolledStudent(enrolledCourseID, year) {
 // Empty content string
   var tableContent = '';
   var query = {};
-  console.log('enrolledCourseID:' + enrolledCourseID);
-  console.log('year:' + year);
-
   query = {"enrolled.CourseID": enrolledCourseID, "enrolled.year": year};
   var url = '/courses/studentlist';
   $.ajax({
@@ -379,18 +360,14 @@ function populateEnrolledStudent(enrolledCourseID, year) {
       tableContent += '<tr>';
       tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.studentID + '</a></td>';
       tableContent += '<td>' + this.studentName + '</td>';
-
       $.each(this.enrolled, function () {
         var thisEnroll = [];
         thisEnroll = this;
         if (thisEnroll.year === year && thisEnroll.CourseID === enrolledCourseID) {
-
           tableContent += '<td>' + formatDate(thisEnroll.enrolDate) + '</td>';
-
         }
       });
-
-      tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + this.studentID + '" data-courseID="' + enrolledCourseID + '" data-offer-year="' + year + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Unenroll</a></td>';
+      tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + this.studentID + '" data-courseID="' + enrolledCourseID + '" data-offer-year="' + year + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
       tableContent += '</tr>';
     });
     $('#studentEnrolled table tbody').html(tableContent);
@@ -657,9 +634,6 @@ function unEnrollStudent(studentID, courseID, year, fromStudent) {
       alert(' student unenroll Error: ' + response.msg);
     }
   });
-
-
-
 }
 ;
 //// Show User Info
@@ -739,13 +713,15 @@ function overlay(id, callback) {
 }
 
 function formatDate(date) {
-     var d = new Date(date),
-         month = '' + (d.getMonth() + 1),
-         day = '' + d.getDate(),
-         year = d.getFullYear();
+  var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
 
-     if (month.length < 2) month = '0' + month;
-     if (day.length < 2) day = '0' + day;
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
 
-     return [year, month, day].join('-');
- }
+  return [year, month, day].join('-');
+}

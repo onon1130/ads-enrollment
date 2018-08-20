@@ -126,6 +126,7 @@ block content
       a.closeOverlay(href="#") 
         span(class="glyphicon glyphicon-remove-circle")
         span Close
+      h3.newTitle Add New Student
       fieldset.add
         span
           input#studentID(type='text', placeholder='Student ID')
@@ -135,8 +136,8 @@ block content
           input#studentDOB(type='text', placeholder='Date of Birth')
         
         br
-       span
-        button#btnAddStudent Add Student
+        span
+          button#btnAddStudent Add Student
   // /ADD STUDENT ENROLLED LIST
    
   // Select STUDENT ENROLLED LIST
@@ -154,8 +155,6 @@ block content
         span (
         span.year
         span )
-
-
       fieldset(style="display:none")
         input#currentStudent(type="radio", value="N", name="newStudent", checked="checked") 
         label(for="currentStudent") Current
