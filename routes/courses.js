@@ -39,7 +39,18 @@ router.post('/studentlist', function (req, res) {
 router.get('/deptlist', function (req, res) {
   var db = req.db;
   var collection = db.get('dept');
-  collection.find({}, {}, function (e, docs) {
+//  collection.find({}, {}, function (e, docs) {
+  collection.aggregate(
+          [
+            {
+              $project: {
+                "deptID": 1,
+                "deptName": 1,
+                "location": 1,
+                numberOfCourse: {$size: "$courseid"}
+              }
+            }
+          ], function (e, docs) {
     res.json(docs);
   });
 });
@@ -79,6 +90,61 @@ router.post('/addStudent', function (req, res) {
   });
 });
 
+/* POST to addcourse. */
+router.post('/addCourse', function (req, res) {
+  var db = req.db;
+  var collection = db.get('course');
+  var query = {};
+  var getQuery = req.body;
+  var courseID = getQuery.courseID;
+  var courseTitle = getQuery.courseTitle;
+  var year = getQuery.year;
+  var level = getQuery.level;
+  var deptID = getQuery.deptID;
+  var deptName = getQuery.deptName;
+  var classSize = getQuery.classSize;
+  var available = classSize;
+  query = {"courseid": courseID,
+    "dept": {
+      "deptID": deptID,
+      "deptName": deptName
+    },
+    "title": courseTitle,
+    "level": level,
+    "offer": [{
+      "year": year,
+      "classSize": classSize,
+      "available": available
+   }]
+  };
+  collection.insert(query, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+
+});
+
+/* POST to updateDept. */
+router.post('/updateDept', function (req, res) {
+  var db = req.db;
+  var collection = db.get('dept');
+  var query = {};
+  var getQuery = req.body;
+  var courseID = getQuery.courseID;
+  var deptID = getQuery.deptID;
+
+  //update dept
+  var findQuery = {"deptID": deptID};
+  var updateQuery = {$addToSet: {"courseid": courseID}};
+  collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  
+  });
+
+});
 /* POST to enroll course. */
 router.post('/enrollCourse', function (req, res) {
   var db = req.db;
@@ -95,9 +161,9 @@ router.post('/enrollCourse', function (req, res) {
   var findQuery = {"courseid": courseID, "offer.year": year};
   var updateQuery = {$push: {"offer.$.enrolled":
               {"studentID": studentID,
-                  "enrolDate": newEnrollDate}},
+                "enrolDate": newEnrollDate}},
     $inc: {"offer.$.available": -1}};
-    collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
+  collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
     );
@@ -116,7 +182,7 @@ router.post('/unEnrollCourse', function (req, res) {
   var courseID = getQuery.courseID;
   var year = getQuery.year;
   var findQuery = {"courseid": courseID, "offer.year": year};
-  var updateQuery = {$pull: {"offer.$.enrolled": {"studentID": studentID} },
+  var updateQuery = {$pull: {"offer.$.enrolled": {"studentID": studentID}},
     $inc: {"offer.$.available": +1}};
   collection.update(findQuery, updateQuery, function (err, result) {
     res.send(
@@ -137,7 +203,7 @@ router.post('/updateStudent', function (req, res) {
   var courseID = getQuery.courseID;
   var year = getQuery.year;
   var findQuery = {"studentID": studentID};
-  var updateQuery = {$pull: {"enrolled": {"CourseID": courseID, "year":year} }};
+  var updateQuery = {$pull: {"enrolled": {"CourseID": courseID, "year": year}}};
   collection.update(findQuery, updateQuery, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
@@ -167,8 +233,8 @@ router.post('/batchUpdateStudent', function (req, res) {
         "year": year,
         "enrolDate": newEnrollDate,
         "deptID": deptID
-        
-  } }};
+
+      }}};
   collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}

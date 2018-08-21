@@ -6,7 +6,7 @@ var studentListData = [];
 
 // DOM Ready =============================================================
 $(document).ready(function () {
-
+  listDeptSelect();
   populateCourse();
 
   // Username link click
@@ -136,7 +136,10 @@ $(document).ready(function () {
     e.preventDefault();
     closeOverlay();
   });
-
+  $(document.body).on('click', '#btnAddCourse', function (e) {
+    e.preventDefault();
+    addCourse();
+  });
 });
 
 // Functions =============================================================
@@ -153,13 +156,18 @@ function populateCourse() {
   var deptID;
   year = $('#course-year').val();
   deptID = $('#course-dept').val();
+  console.log('deptID:' + deptID);
+  console.log('year:' + year);
+
   if (year !== 'all') {
     var yearQuery = {'offer.year': year};
     $.extend(query, yearQuery);
   }
-  if (deptID !== 'all') {
+  if (deptID !== 'all' && deptID !== null) {
+
     var deptQuery = {'dept.deptID': deptID};
     $.extend(query, deptQuery);
+
   }
   var url = '/courses/courselist';
   $.ajax({
@@ -177,6 +185,9 @@ function populateCourse() {
       tableContent += '<td>' + this.title + '</td>';
       tableContent += '<td>' + this.level + '</td>';
       tableContent += '<td>' + this.dept.deptName + '</td>';
+      tableContent += '<td><a href="#" class="courseUpdate"  rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+      tableContent += '<td><a href="#" class="courseDelete"  rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td><a href="#" class="courseEnroll"   data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add year</a></td>';
       var offerCount = 0;
       var thisTitle = this.title;
       var thisDeptID = this.dept.deptID;
@@ -194,11 +205,21 @@ function populateCourse() {
 
         if (thisOffer.year === year || $('#course-year').val() === 'all') {
           if (offerCount > 0) {
-            tableContent += '</tr><tr><td colspan="4"></td>';
+            tableContent += '</tr><tr><td colspan="7"></td>';
           }
           tableContent += '<td>' + thisOffer.year + '</td>';
           tableContent += '<td><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + enrolledStudent + '</a></td>';
-          tableContent += '<td>' + thisOffer.available + '/' + thisOffer.classSize + '</td>';
+
+          var availablePercent = parseInt(((thisOffer.classSize - thisOffer.available) / thisOffer.classSize) * 100);
+          var progressCSS = "success";
+          if (availablePercent > 75) {
+            progressCSS = "warning";
+          } else if (availablePercent > 90) {
+            progressCSS = "danger";
+          }
+          tableContent += '<td><div class="progress">';
+          tableContent += '<div class="progress-bar progress-bar-' + progressCSS + '" style="width: ' + availablePercent + '%" aria-valuenow="' + (thisOffer.classSize - thisOffer.available) + '" aria-valuemin="0" aria-valuemax="' + thisOffer.classSize + '"></div></div>';
+          tableContent += '<div>' + thisOffer.available + '/' + thisOffer.classSize + '</div></td>';
           tableContent += '<td><a href="#" class="courseUpdate"  data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
           tableContent += '<td><a href="#" class="courseDelete" data-offer-year="' + thisOffer.year + '" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
           tableContent += '<td><a href="#" class="courseEnroll" data-course-title="' + thisTitle + '" data-offer-year="' + thisOffer.year + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
@@ -248,7 +269,7 @@ function populateStudent(studentName) {
       var thisStudentID = this.studentID;
       tableContent += '<tr>';
       tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.studentID + '</a></td>';
-      tableContent += '<td>' + this.studentName + '</td>';
+      tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
       tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
       tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
@@ -317,9 +338,9 @@ function populateSearchStudent(studentName, studentID, courseID, year) {
       hasEnrolled = false;
       var thisID = this.studentID;
       tableContent += '<tr>';
-      tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.studentID + '</a></td>';
-      tableContent += '<td>' + this.studentName + '</td>';
-      tableContent += '<td>' + this.dob + '</td>';
+      tableContent += '<td><a href="#" rel="' + this._id + '">' + this.studentID + '</a></td>';
+      tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
+      tableContent += '<td>' + formatDate(this.dob) + '</td>';
       if (this.enrolled && this.enrolled.length > 0) {
 
         $.each(this.enrolled, function () {
@@ -333,7 +354,7 @@ function populateSearchStudent(studentName, studentID, courseID, year) {
       if (hasEnrolled) {
         tableContent += '<td></td>';
       } else {
-        tableContent += '<td><button type="button" data-studentID="' + thisID + '" class="studentEnrollCourse">Enroll</button></td>';
+        tableContent += '<td><button type="button" class="btn btn-primary" data-studentID="' + thisID + '" class="studentEnrollCourse">Enroll</button></td>';
       }
       tableContent += '</tr>';
     });
@@ -388,6 +409,7 @@ function populateDept() {
       tableContent += '<td>' + this.deptID + '</td>';
       tableContent += '<td>' + this.deptName + '</td>';
       tableContent += '<td>' + this.location + '</td>';
+      tableContent += '<td>' + this.numberOfCourse + '</td>';
       tableContent += '<td><a href="#" class="updateDept" rel="' + this._ID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
       tableContent += '<td><a href="#" class="deleteDept" rel="' + this._ID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
       tableContent += '<td><a href="#" class="addCourse" rel="' + this._ID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Course</a></td>';
@@ -596,6 +618,80 @@ function addStudent() {
   }
 }
 ;
+function addCourse() {
+  var errorCount = 0;
+  $('#courseAdd input').each(function (index, val) {
+    if ($(this).val() === '') {
+      errorCount++;
+    }
+  });
+  // Check and make sure errorCount's still at zero
+  if (errorCount === 0) {
+
+    var courseID = $('#newCourseID').val();
+    var courseTitle = $('#newCourseTitle').val();
+    var year = $('#newCourseYear').val();
+    var level = $('#newCourseLevel').val();
+    var deptName = $('#newCourseDept option:selected').text();
+    var deptID = $('#newCourseDept').val();
+    var classSize = $('#newCourseSize').val();
+    console.log('add course');
+    console.log('courseID:' + courseID);
+    console.log('courseTitle:' + courseTitle);
+    console.log('year:' + year);
+    console.log('level:' + level);
+    console.log('deptName:' + deptName);
+    console.log('deptID:' + deptID);
+    console.log('classSize:' + classSize);
+    var newCourse = {
+      "courseID": courseID,
+      "courseTitle": courseTitle,
+      "year": year,
+      "level": level,
+      "deptName": deptName,
+      "deptID": deptID,
+      "classSize": classSize
+    };
+    $.ajax({
+      type: 'POST',
+      data: newCourse,
+      url: '/courses/addCourse',
+      dataType: 'JSON'
+    }).done(function (response) {
+      // Check for successful (blank) response
+      if (response.msg === '') {
+//         populateCourse();
+//            closeOverlay('courseAdd');
+        $.ajax({
+          type: 'POST',
+          data: newCourse,
+          url: '/courses/updateDept',
+          dataType: 'JSON'
+        }).done(function (response) {
+          // Check for successful (blank) response
+          if (response.msg === '') {
+            populateCourse();
+            closeOverlay('courseAdd');
+          } else {
+            alert('Error dept: ' + response.msg);
+          }
+        });
+
+
+      } else {
+        alert('Error course: ' + response.msg);
+      }
+    });
+
+  } else {
+    // If errorCount is more than 0, error out
+    alert('Please fill in all fields');
+    return false;
+  }
+}
+;
+
+
 
 function unEnrollStudent(studentID, courseID, year, fromStudent) {
   console.log('unenroll');
@@ -725,3 +821,18 @@ function formatDate(date) {
 
   return [year, month, day].join('-');
 }
+
+function listDeptSelect() {
+  var selectOption = '';
+  $('.deptlistselect').html();
+  selectOption += '<option value="all" selected="selected">All</option>';
+  $.getJSON('/courses/deptlist', function (data) {
+    deptListData = data;
+    $.each(data, function () {
+      selectOption += '<option value="' + this.deptID + '">' + this.deptName + '</option>';
+    });
+    $('.deptlistselect').html(selectOption);
+  });
+}
+
+  
