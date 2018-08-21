@@ -1,0 +1,35 @@
+// COURSE LIST
+#courseList.listPanel
+
+  .filter
+    .actionBar
+      a#addCourse(href="#", class="overlayLink", data-overlay="courseAdd")
+        span(class="glyphicon glyphicon-plus")
+        span Add Course
+    .filterBlock
+      span Year:
+      span
+        select.form-control(id="course-year")
+          option(value="all", selected="selected") All
+          option(value="2016") 2016
+          option(value="2017") 2017
+          option(value="2018") 2018
+    .filterBlock
+      span Department:
+      span
+        select.form-control.deptlistselect#course-dept
+  table.table
+    thead
+      th ID
+      th Course
+      th Level
+      th Department
+      th
+      th
+      th
+      th Year
+      th Enrolled
+      th Vancancy
+      th(colspan="3")
+    tbody
+// /COURSE LIST

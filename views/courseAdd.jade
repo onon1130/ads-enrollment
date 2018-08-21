@@ -1,0 +1,35 @@
+// ADD Course ENROLLED LIST
+#courseAdd.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3.newTitle Add New Course
+    fieldset.add
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseID") Course ID:
+        .col-sm-10
+          input#newCourseID.form-control(type='text', placeholder='Course ID')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseTitle") Course Title:
+        .col-sm-10
+          input#newCourseTitle.form-control(type='text', placeholder='Course Title')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseLevel") Course Level:
+        .col-sm-10
+          input#newCourseLevel.form-control(type='text', placeholder='Course Level')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseDept") Department:
+        .col-sm-10
+          select#newCourseDept.deptlistselect.form-control
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseYear") Year:
+        .col-sm-10
+          input#newCourseYear.form-control(type='text', placeholder='Course Year')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="newCourseSize") Size:
+        .col-sm-10
+          input#newCourseSize.form-control(type='text', placeholder='Course Size')
+      .form-group.form-action
+        button#btnAddCourse.btn.btn-primary Add Course
+// /ADD Course LIST

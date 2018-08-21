@@ -1,0 +1,23 @@
+// ADD STUDENT ENROLLED LIST
+#studentAdd.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3.newTitle Add New Student
+    fieldset.add
+      .form-group.row
+        label.col-sm-2.col-form-label(for="studentID") Student ID:
+        .col-sm-10
+          input#studentID.form-control(type='text', placeholder='Student ID')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="studentName") Student Name:
+        .col-sm-10
+          input#studentName.form-control(type='text', placeholder='Student Name')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="studentDOB") Date of Birth:
+        .col-sm-10
+          input#studentDOB.form-control(type='text', placeholder='Date of Birth')
+      .form-group.form-action
+        button#btnAddStudent.btn.btn-primary Add Student
+// /ADD STUDENT ENROLLED LIST

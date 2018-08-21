@@ -1,0 +1,36 @@
+// Select STUDENT ENROLLED LIST
+#studentEnroll.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3#enrollTitle Enroll for 
+      span.courseID
+      span -
+      span.courseTitle
+      br
+      span.deptName
+      span (
+      span.year
+      span )
+    nav.navbar.navbar-default
+      .container-fluid 
+      fieldset.search#searchStudentForm.navbar-form.navbar-left
+        .form-group
+          span
+            input#searchStudentID.form-control(type='text', placeholder='Student ID')
+        .form-group
+          span
+            input#searchStudentName.form-control(type='text', placeholder='Student Name')
+        .form-group
+          button#btnSearchStudent.btn.btn-default Search
+
+    #searchStudentResult
+      table.table
+        thead
+          th Student ID
+          th Student Name
+          th DOB
+          th 
+        tbody  
+// /Select STUDENT ENROLLED LIST
