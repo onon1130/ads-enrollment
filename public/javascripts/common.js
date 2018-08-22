@@ -54,14 +54,11 @@ function closeOverlay(id, callback) {
   $('html').css('overflow-y', 'auto');
   if (id === undefined || id === '') {
     $('.overlay').fadeOut();
-    // mark the modal window as hidden
     $('.overlay').attr('aria-hidden', 'true');
   } else {
     $('#' + id).fadeOut();
-    // mark the modal window as hidden
     $('#' + id).attr('aria-hidden', 'true');
   }
-
 }
 
 function overlay(id, callback) {
@@ -89,14 +86,22 @@ function formatDate(date) {
 }
 
 function listDeptSelect() {
-  var selectOption = '';
-  $('.deptlistselect').html();
-  selectOption += '<option value="all" selected="selected">All</option>';
-  $.getJSON('/courses/deptlist', function (data) {
-    deptListData = data;
-    $.each(data, function () {
-      selectOption += '<option value="' + this.deptID + '">' + this.deptName + '</option>';
+
+
+  $('.deptlistselect').each(function (index) {
+    var $thisSelect = $(this);
+    $thisSelect.html('');
+    var selectOption = '';
+    var thisID = $thisSelect.attr('id');
+    if (thisID !== 'newCourseDept') {
+      selectOption += '<option value="all" selected="selected">All</option>';
+    }
+    $.getJSON('/courses/deptlist', function (data) {
+      deptListData = data;
+      $.each(data, function () {
+        selectOption += '<option value="' + this.deptID + '">' + this.deptName + '</option>';
+      });
+      $thisSelect.html(selectOption);
     });
-    $('.deptlistselect').html(selectOption);
   });
 }

@@ -1,0 +1,27 @@
+// ADD Course ENROLLED LIST
+#courseEdit.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3.newTitle Edit Course Info
+    fieldset.add
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editCourseID") Course ID:
+        .col-sm-10
+          input#editCourseID.form-control(type='text', placeholder='Course ID' disabled="disabled")
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editCourseTitle") Course Title:
+        .col-sm-10
+          input#editCourseTitle.form-control(type='text', placeholder='Course Title')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editCourseLevel") Course Level:
+        .col-sm-10
+          input#editCourseLevel.form-control(type='text', placeholder='Course Level')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editCourseDept") Department:
+        .col-sm-10
+          select#editCourseDept.deptlistselect.form-control(disabled="disabled")
+      .form-group.form-action
+        button#btnEditCourse.btn.btn-primary Update
+// /ADD Course LIST

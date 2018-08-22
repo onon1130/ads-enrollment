@@ -61,6 +61,7 @@ function populateStudent(studentName) {
             if (enrolledCount > 0) {
               tableContent += '</tr><tr><td colspan="5"></td>';
             }
+            tableContent += '<td>' + thisEnroll.CourseID + '</td>';
             tableContent += '<td>' + thisEnroll.title + '</td>';
             tableContent += '<td>' + thisEnroll.deptName + '</td>';
             tableContent += '<td>' + thisEnroll.year + '</td>';

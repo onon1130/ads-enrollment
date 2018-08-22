@@ -1,0 +1,21 @@
+// ADD Course ENROLLED LIST
+#courseOfferEdit.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3.newTitle Update Course Offer for 
+       span.courseID
+       span.courseTitle
+    fieldset.add
+      //      .form-group.row
+      //        label.col-sm-2.col-form-label(for="editCourseOfferYear" ) Year:
+      //        .col-sm-10
+      //          input#editCourseOfferYear.form-control(type='text', placeholder='Course Year')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editCourseOfferSize") Size:
+        .col-sm-10
+          input#editCourseOfferSize.form-control(type='text', placeholder='Course Size')
+      .form-group.form-action
+        button#btnUpdateCourseOffer.btn.btn-primary Update Course Offer
+// /ADD Course LIST
