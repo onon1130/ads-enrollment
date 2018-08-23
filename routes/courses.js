@@ -336,7 +336,32 @@ router.post('/updateOfferInfo', function (req, res) {
     );
   });
 });
+//delete course
+router.post('/deleteCourse', function (req, res) {
+  var db = req.db;
+  var collection = db.get('course');
+  var getQuery = req.body;
+  var courseID = getQuery.courseID;
+  var year = getQuery.year;
+  
+ 
+  var findQuery = {"courseid": courseID};
+  collection.update(findQuery, updateQuery, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
 
 
+/* DELETE to deleteuser. */
+router.delete('/deleteCourse/:id', function (req, res) {
+  var db = req.db;
+  var collection = db.get('course');
+  var userToDelete = req.params.id;
+  collection.remove({'_id': userToDelete}, function (err) {
+    res.send((err === null) ? {msg: ''} : {msg: 'error: ' + err});
+  });
+});
 module.exports = router;
 

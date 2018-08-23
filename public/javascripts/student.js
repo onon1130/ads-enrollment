@@ -46,7 +46,7 @@ function populateStudent(studentName) {
       var thisID = this._id;
       var thisStudentID = this.studentID;
       tableContent += '<tr>';
-      tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.studentID + '</a></td>';
+      tableContent += '<td>' + this.studentID + '</td>';
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
       tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';

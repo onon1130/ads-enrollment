@@ -162,7 +162,8 @@ $(document).ready(function () {
       }
     }
   });
-
+  $(document.body).on('click', '.courseDelete', deleteCourse);
+ 
 
   //action show edit course offer
   $(document.body).on('click', 'a.offerUpdate', function (e) {
@@ -258,13 +259,20 @@ function populateCourse() {
     $.each(data, function () {
       var thisID = this._id;
       var courseID = this.courseid;
+      var offerNum;
+      offerNum = 0;
+      if (this.offer) {
+        if (this.offer.length > 0) {
+          offerNum = this.offer.length;
+        }
+      }
       tableContent += '<tr>';
       tableContent += '<td>' + courseID + '</td>';
       tableContent += '<td>' + this.title + '</td>';
       tableContent += '<td>' + this.level + '</td>';
       tableContent += '<td>' + this.dept.deptName + '</td>';
       tableContent += '<td><a href="#" class="courseUpdate" data-course-title="' + this.title + '" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-courseID="' + courseID + '" data-level="' + this.level + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td><a href="#" class="courseDelete" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td><a href="#" class="courseDelete" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '" rel="' + this._id + '" data-offer-num="' + offerNum + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
       tableContent += '<td><a href="#" class="courseAddOffer" data-course-title="' + this.title + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add year</a></td>';
       var offerCount = 0;
       var thisTitle = this.title;
@@ -355,7 +363,7 @@ function populateSearchStudent(studentName, studentID, courseID, year) {
       hasEnrolled = false;
       var thisID = this.studentID;
       tableContent += '<tr>';
-      tableContent += '<td><a href="#" rel="' + this._id + '">' + this.studentID + '</a></td>';
+      tableContent += '<td>' + this.studentID + '</td>';
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
       if (this.enrolled && this.enrolled.length > 0) {
@@ -636,6 +644,7 @@ function deleteCourseOffer(courseID, year) {
 
   console.log('year:' + year);
 
+
   var deleteOffer = {
     "courseID": courseID,
     "year": year
@@ -747,6 +756,44 @@ function updateCourseOffer(courseID, currentYear, newYear, newCourseSize, newAva
     // If errorCount is more than 0, error out
     alert('Please fill in all fields');
     return false;
+  }
+
+}
+// Delete course
+function deleteCourse(event) {
+
+  event.preventDefault();
+  var courseID = $(this).attr('data-courseID');
+  var offerNum = parseInt($(this).attr('data-offer-num'));
+  console.log('offerNum:'+offerNum);
+  if (offerNum < 1) {
+    // Pop up a confirmation dialog
+    var confirmation = confirm('Are you sure you want to delete this course?');
+    // Check and make sure the user confirmed
+    if (confirmation === true) {
+
+      // If they did, do our delete
+      $.ajax({
+        type: 'DELETE',
+        url: '/courses/deleteCourse/' + $(this).attr('rel')
+      }).done(function (response) {
+
+        // Check for a successful (blank) response
+        if (response.msg === '') {
+        } else {
+          alert('Error: ' + response.msg);
+        }
+
+        // Update the table
+        populateCourse();
+      });
+    } else {
+
+      // If they said no to the confirm, do nothing
+      return false;
+    }
+  } else {
+    alert('Course cannot be deleted with class offered.')
   }
 
 }
