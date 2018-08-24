@@ -7,7 +7,37 @@ $(document).ready(function () {
   });
   // show add student form
   $(document.body).on('click', '#btnAddStudent', addStudent);
+  //action show edit student
+  $(document.body).on('click', 'a.updateStudent', function (e) {
+    e.preventDefault();
+    var studentID = $(this).attr('data-studentID');
+    var studentName = $(this).attr('data-studentName');
+    var dob = $(this).attr('data-dob');
 
+    console.log('studentID:' + studentID);
+    console.log('studentName:' + studentName);
+    console.log('dob:' + dob);
+    $('#studentEdit').attr('data-studentID', studentID);
+    $('#editStudentID').val(studentID);
+    $('#editStudentName').val(studentName);
+    $('#EditStudentDOB').val(dob);
+    overlay("studentEdit");
+  });
+  //action edit student
+  $(document.body).on('click', '#btnEditStudent', function (e) {
+    e.preventDefault();
+    var studentID = $('#studentEdit').attr('data-studentID');
+    var studentName = $('#editStudentName').val();
+    var dob = $('#EditStudentDOB').val();
+
+    var confirmation = confirm('Are you sure you want to update the student info?');
+    if (confirmation === true) {
+      updateStudent(studentID, studentName, dob);
+    } else {
+      // If they said no to the confirm, do nothing
+      return false;
+    }
+  });
 });
 
 // Functions =============================================================
@@ -45,14 +75,18 @@ function populateStudent(studentName) {
     $.each(data, function () {
       var thisID = this._id;
       var thisStudentID = this.studentID;
+      var enrolledCount = 0;
+      if (this.enrolled && this.enrolled.length > 0) {
+        enrolledCount = this.enrolled.length;
+      }
       tableContent += '<tr>';
-      tableContent += '<td>' + this.studentID + '</td>';
+      tableContent += '<td>' + thisStudentID + '</td>';
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
-      tableContent += '<td><a href="#" class="updateStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td><a href="#" class="updateStudent" data-studentName="' + this.studentName + '" data-studentID="' + thisStudentID + '" data-dob="' + formatDate(this.dob) + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="'+enrolledCount+'"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
 
-      var enrolledCount = 0;
+      enrolledCount = 0;
       if (this.enrolled && this.enrolled.length > 0) {
         $.each(this.enrolled, function () {
           var thisEnroll = [];
@@ -203,4 +237,42 @@ function addStudent() {
     alert('Please fill in all fields');
     return false;
   }
+}// update Student
+function updateStudent(studentID, studentName, dob) {
+  console.log('studentID:' + studentID);
+  console.log('studentName:' + dob);
+  var errorCount = 0;
+  $('#studentEdit input').each(function (index, val) {
+    if ($(this).val() === '') {
+      errorCount++;
+    }
+  });
+
+  if (errorCount === 0) {
+    var updateStudent = {
+      "studentID": studentID,
+      "studentName": studentName,
+      "dob": dob
+    };
+    $.ajax({
+      type: 'POST',
+      data: updateStudent,
+      url: '/courses/updateStudentInfo',
+      dataType: 'JSON'
+    }).done(function (response) {
+
+      if (response.msg === '') {
+        populateStudent();
+        closeOverlay('studentEdit');
+      } else {
+        alert('Error student update: ' + response.msg);
+      }
+    });
+
+  } else {
+    // If errorCount is more than 0, error out
+    alert('Please fill in all fields');
+    return false;
+  }
+
 }

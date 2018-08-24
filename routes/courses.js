@@ -112,11 +112,11 @@ router.post('/addCourse', function (req, res) {
     "title": courseTitle,
     "level": level,
     "offer": [{
-      "year": year,
-      "classSize": classSize,
-      "available": available,
-      "enrolled":null
-   }]
+        "year": year,
+        "classSize": classSize,
+        "available": available,
+        "enrolled": null
+      }]
   };
   collection.insert(query, function (err, result) {
     res.send(
@@ -135,7 +135,7 @@ router.post('/updateCourseInfo', function (req, res) {
   var courseTitle = getQuery.courseTitle;
   var level = getQuery.level;
   var findQuery = {"courseid": courseID};
-  var updateQuery = {$set:{"title": courseTitle,"level": level}};
+  var updateQuery = {$set: {"title": courseTitle, "level": level}};
   collection.update(findQuery, updateQuery, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
@@ -147,12 +147,12 @@ router.post('/updateCourseInfo', function (req, res) {
 router.post('/updateStudentCourseInfo', function (req, res) {
   var db = req.db;
   var collection = db.get('student');
-  
+
   var getQuery = req.body;
   var courseID = getQuery.courseID;
   var courseTitle = getQuery.courseTitle;
   var findQuery = {"enrolled.CourseID": courseID};
-  var updateQuery = {$set:{"enrolled.$.title": courseTitle}};
+  var updateQuery = {$set: {"enrolled.$.title": courseTitle}};
   collection.update(findQuery, updateQuery, {multi: true}, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
@@ -176,7 +176,7 @@ router.post('/updateDept', function (req, res) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
     );
-  
+
   });
 
 });
@@ -211,8 +211,8 @@ router.post('/deleteCourseOffer', function (req, res) {
   var getQuery = req.body;
   var courseID = getQuery.courseID;
   var year = getQuery.year;
-  
- 
+
+
   var findQuery = {"courseid": courseID};
   var updateQuery = {$pull: {"offer": {"year": year}}};
   collection.update(findQuery, updateQuery, function (err, result) {
@@ -328,31 +328,14 @@ router.post('/updateOfferInfo', function (req, res) {
   var year = getQuery.year;
   var ClassSize = getQuery.ClassSize;
   var available = getQuery.available;
-  var findQuery = {"courseid": courseID, "offer.year": year}; 
-  var updateQuery = {$set:{"offer.$.classSize": ClassSize,"offer.$.available": available}};
+  var findQuery = {"courseid": courseID, "offer.year": year};
+  var updateQuery = {$set: {"offer.$.classSize": ClassSize, "offer.$.available": available}};
   collection.update(findQuery, updateQuery, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
     );
   });
 });
-//delete course
-router.post('/deleteCourse', function (req, res) {
-  var db = req.db;
-  var collection = db.get('course');
-  var getQuery = req.body;
-  var courseID = getQuery.courseID;
-  var year = getQuery.year;
-  
- 
-  var findQuery = {"courseid": courseID};
-  collection.update(findQuery, updateQuery, function (err, result) {
-    res.send(
-            (err === null) ? {msg: ''} : {msg: err}
-    );
-  });
-});
-
 
 /* DELETE to deleteuser. */
 router.delete('/deleteCourse/:id', function (req, res) {
@@ -365,3 +348,21 @@ router.delete('/deleteCourse/:id', function (req, res) {
 });
 module.exports = router;
 
+/* POST to update student info. */
+router.post('/updateStudentInfo', function (req, res) {
+  var db = req.db;
+  var collection = db.get('student');
+  var query = {};
+  var getQuery = req.body;
+  var studentID = getQuery.studentID;
+  var studentName = getQuery.studentName;
+  var dob = getQuery.dob;
+  var findQuery = {"studentID": studentID};
+  var updateQuery = {$set: {"studentName": studentName,
+      "dob": dob}};
+  collection.update(findQuery, updateQuery, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
