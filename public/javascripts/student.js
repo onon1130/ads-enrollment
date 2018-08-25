@@ -83,8 +83,8 @@ function populateStudent(studentName) {
       tableContent += '<td>' + thisStudentID + '</td>';
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
-      tableContent += '<td><a href="#" class="updateStudent" data-studentName="' + this.studentName + '" data-studentID="' + thisStudentID + '" data-dob="' + formatDate(this.dob) + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="' + enrolledCount + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="updateStudent" data-studentName="' + this.studentName + '" data-studentID="' + thisStudentID + '" data-dob="' + formatDate(this.dob) + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="' + enrolledCount + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
 
       enrolledCount = 0;
       if (this.enrolled && this.enrolled.length > 0) {
@@ -100,7 +100,7 @@ function populateStudent(studentName) {
             tableContent += '<td>' + thisEnroll.deptName + '</td>';
             tableContent += '<td>' + thisEnroll.year + '</td>';
             tableContent += '<td>' + formatDate(thisEnroll.enrolDate) + '</td>';
-            tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + thisStudentID + '" data-courseID="' + thisEnroll.CourseID + '" data-offer-year="' + thisEnroll.year + '" data-from-student="true"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
+            tableContent += '<td class="trigger-btn"><a href="#" class="unEnrollCourse" data-studentID="' + thisStudentID + '" data-courseID="' + thisEnroll.CourseID + '" data-offer-year="' + thisEnroll.year + '" data-from-student="true"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
             enrolledCount++;
           }
         });

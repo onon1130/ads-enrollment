@@ -163,7 +163,7 @@ $(document).ready(function () {
     }
   });
   $(document.body).on('click', '.courseDelete', deleteCourse);
- 
+
 
   //action show edit course offer
   $(document.body).on('click', 'a.offerUpdate', function (e) {
@@ -271,9 +271,9 @@ function populateCourse() {
       tableContent += '<td>' + this.title + '</td>';
       tableContent += '<td>' + this.level + '</td>';
       tableContent += '<td>' + this.dept.deptName + '</td>';
-      tableContent += '<td><a href="#" class="courseUpdate" data-course-title="' + this.title + '" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-courseID="' + courseID + '" data-level="' + this.level + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td><a href="#" class="courseDelete" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '" rel="' + this._id + '" data-offer-num="' + offerNum + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-      tableContent += '<td><a href="#" class="courseAddOffer" data-course-title="' + this.title + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add year</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="courseUpdate" data-course-title="' + this.title + '" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-courseID="' + courseID + '" data-level="' + this.level + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="courseDelete" data-dept-name="' + this.dept.deptName + '" data-dept-id="' + this.dept.deptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '" rel="' + this._id + '" data-offer-num="' + offerNum + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="courseAddOffer" data-course-title="' + this.title + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add year</a></td>';
       var offerCount = 0;
       var thisTitle = this.title;
       var thisDeptID = this.dept.deptID;
@@ -295,34 +295,33 @@ function populateCourse() {
                 tableContent += '</tr><tr><td colspan="7"></td>';
               }
               tableContent += '<td>' + thisOffer.year + '</td>';
-              tableContent += '<td><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + enrolledStudent + '</a></td>';
-
-              var availablePercent = parseInt(((thisOffer.available) / thisOffer.classSize) * 100);
+              // tableContent += '<td><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + enrolledStudent + '</a></td>';
+              var vancancy = thisOffer.available;
+              var availablePercent = parseInt((vancancy / thisOffer.classSize) * 100);
               var enrolledPercent = 100 - availablePercent;
-              var enrolledprogressCSS = "success";
+
               var progressCSS = "success";
+              var vancanyclass = "none";
               if (availablePercent < 100 && availablePercent > 65) {
                 progressCSS = "info";
+                
               } else if (availablePercent <= 65 && availablePercent > 20) {
                 progressCSS = "warning";
+                
               } else if (availablePercent <= 20) {
                 progressCSS = "danger";
+                vancanyclass = "full";
               }
               var enrolledPercent = 100 - availablePercent;
-//              var enrolledprogressCSS = "success";
-//              if (availablePercent < 100 && availablePercent > 65) {
-//                enrolledprogressCSS = "info";
-//              } else if (availablePercent <= 65 && availablePercent > 20) {
-//                enrolledprogressCSS = "warning";
-//              } else if (availablePercent <= 20) {
-//                enrolledprogressCSS = "danger";
-//              }
-              tableContent += '<td><div class="progress">';
-              tableContent += '<div class="progress-bar progress-bar-' + progressCSS + '" style="width: ' + enrolledPercent + '%" aria-valuenow="' + (thisOffer.classSize - thisOffer.available) + '" aria-valuemin="0" aria-valuemax="' + thisOffer.classSize + '"></div></div>';
-              tableContent += '<div> <span class="glyphicon glyphicon-user" aria-hidden="true"></span>' + enrolledStudent + '/' + thisOffer.classSize + ', vancancy left:'+thisOffer.available +'</div></td>';
-              tableContent += '<td><a href="#" class="offerUpdate" data-course-title="' + thisTitle + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-offer-year="' + thisOffer.year + '" data-courseID="' + courseID + '" data-course-size="' + thisOffer.classSize + '" data-course-available="' + thisOffer.available + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-              tableContent += '<td><a href="#" class="offerDelete" data-offer-year="' + thisOffer.year + '" data-courseID="' + courseID + '" data-enrolled-student="' + (thisOffer.classSize - thisOffer.available) + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
-              tableContent += '<td><a href="#" class="courseEnroll" data-course-title="' + thisTitle + '" data-offer-year="' + thisOffer.year + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
+              if (vancancy ===0 ){
+                vancancy = "<strong>FULL</strong>";
+              }
+              tableContent += '<td class="progressbar"><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><strong>' + enrolledStudent + '</strong> / ' + thisOffer.classSize + ' <span class="glyphicon glyphicon-user" aria-hidden="true"></span> (' + enrolledPercent + '%) <div class="progress">';
+              tableContent += '<div class="progress-bar progress-bar-' + progressCSS + '" style="width: ' + enrolledPercent + '%" aria-valuenow="' + (thisOffer.classSize - thisOffer.available) + '" aria-valuemin="0" aria-valuemax="' + thisOffer.classSize + '"></div></div></a></td>';
+              tableContent += '<td class="vancancy"><span class="' + vancanyclass + '">' + vancancy + '</span></div></td>';
+              tableContent += '<td class="trigger-btn"><a href="#" class="offerUpdate" data-course-title="' + thisTitle + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-offer-year="' + thisOffer.year + '" data-courseID="' + courseID + '" data-course-size="' + thisOffer.classSize + '" data-course-available="' + thisOffer.available + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+              tableContent += '<td class="trigger-btn"><a href="#" class="offerDelete" data-offer-year="' + thisOffer.year + '" data-courseID="' + courseID + '" data-enrolled-student="' + (thisOffer.classSize - thisOffer.available) + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+              tableContent += '<td class="trigger-btn"><a href="#" class="courseEnroll" data-course-title="' + thisTitle + '" data-offer-year="' + thisOffer.year + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
               offerCount++;
             }
           });
@@ -415,7 +414,7 @@ function populateEnrolledStudent(enrolledCourseID, year) {
     $.each(data, function () {
       var thisID = this._id;
       tableContent += '<tr>';
-      tableContent += '<td><a href="#" class="linkshowuser" rel="' + this._id + '" title="Show Details">' + this.studentID + '</a></td>';
+      tableContent += '<td>' + this.studentID + '</td>';
       tableContent += '<td>' + this.studentName + '</td>';
       $.each(this.enrolled, function () {
         var thisEnroll = [];
@@ -424,7 +423,7 @@ function populateEnrolledStudent(enrolledCourseID, year) {
           tableContent += '<td>' + formatDate(thisEnroll.enrolDate) + '</td>';
         }
       });
-      tableContent += '<td><a href="#" class="unEnrollCourse" data-studentID="' + this.studentID + '" data-courseID="' + enrolledCourseID + '" data-offer-year="' + year + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="unEnrollCourse" data-studentID="' + this.studentID + '" data-courseID="' + enrolledCourseID + '" data-offer-year="' + year + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Unenroll</a></td>';
       tableContent += '</tr>';
     });
     $('#studentEnrolled table tbody').html(tableContent);
@@ -776,7 +775,7 @@ function deleteCourse(event) {
   event.preventDefault();
   var courseID = $(this).attr('data-courseID');
   var offerNum = parseInt($(this).attr('data-offer-num'));
-  console.log('offerNum:'+offerNum);
+  console.log('offerNum:' + offerNum);
   if (offerNum < 1) {
     // Pop up a confirmation dialog
     var confirmation = confirm('Are you sure you want to delete this course?');
