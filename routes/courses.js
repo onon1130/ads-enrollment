@@ -64,25 +64,28 @@ router.post('/addStudent', function (req, res) {
   var studentID = getQuery.studentID;
   var studentName = getQuery.studentName;
   var dob = getQuery.dob;
-  var courseID = getQuery.courseID;
-  var deptName = getQuery.deptName;
-  var courseTitle = getQuery.title;
-  var year = getQuery.year;
-  var newEnrollDate = getQuery.enrolDate;
-  var deptID = getQuery.deptID;
-  var courseObjectID = getQuery.enrolledCourseID;
+//  var courseID = getQuery.courseID;
+//  var deptName = getQuery.deptName;
+//  var courseTitle = getQuery.title;
+//  var year = getQuery.year;
+//  var newEnrollDate = getQuery.enrolDate;
+//  var deptID = getQuery.deptID;
+//  var courseObjectID = getQuery.enrolledCourseID;
 
+//  query = {"studentID": studentID,
+//    "studentName": studentName,
+//    "dob": dob,
+//    "enrolled": [{
+//        "CourseID": courseID,
+//        "deptName": deptName,
+//        "title": courseTitle,
+//        "year": year,
+//        "enrolDate": newEnrollDate,
+//        "deptID": deptID,
+//        "enrolledCourseID": courseObjectID}]};
   query = {"studentID": studentID,
     "studentName": studentName,
-    "dob": dob,
-    "enrolled": [{
-        "CourseID": courseID,
-        "deptName": deptName,
-        "title": courseTitle,
-        "year": year,
-        "enrolDate": newEnrollDate,
-        "deptID": deptID,
-        "enrolledCourseID": courseObjectID}]};
+    "dob": dob};
   collection.insert(query, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
@@ -326,8 +329,8 @@ router.post('/updateOfferInfo', function (req, res) {
   var getQuery = req.body;
   var courseID = getQuery.courseID;
   var year = getQuery.year;
-  var ClassSize = getQuery.ClassSize;
-  var available = getQuery.available;
+  var ClassSize = parseInt(getQuery.ClassSize);
+  var available = parseInt(getQuery.available);
   var findQuery = {"courseid": courseID, "offer.year": year};
   var updateQuery = {$set: {"offer.$.classSize": ClassSize, "offer.$.available": available}};
   collection.update(findQuery, updateQuery, function (err, result) {

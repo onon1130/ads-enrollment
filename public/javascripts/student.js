@@ -84,7 +84,7 @@ function populateStudent(studentName) {
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
       tableContent += '<td><a href="#" class="updateStudent" data-studentName="' + this.studentName + '" data-studentID="' + thisStudentID + '" data-dob="' + formatDate(this.dob) + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="'+enrolledCount+'"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="' + enrolledCount + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
 
       enrolledCount = 0;
       if (this.enrolled && this.enrolled.length > 0) {
@@ -118,17 +118,17 @@ function addStudent() {
   console.log('add student!!');
   var enrollCourse;
   enrollCourse = false;
-  if ($('#studentAdd').attr('data-enroll') !== '' && typeof $('#studentAdd').attr('data-enroll') !== 'undefined') {
-    enrollCourse = true;
-    var courseID = $('#studentAdd').attr('data-courseID');
-    var courseTitle = $('#studentAdd').attr('data-course-title');
-    var year = $('#studentAdd').attr('data-offer-year');
-    var deptName = $('#studentAdd').attr('data-dept-name');
-    var deptID = $('#studentAdd').attr('data-dept-id');
-    var courseObjectID = $('#studentAdd').attr('data-obj-id');
-  } else {
-    enrollCourse = false;
-  }
+//  if ($('#studentAdd').attr('data-enroll') !== '' && typeof $('#studentAdd').attr('data-enroll') !== 'undefined') {
+//    enrollCourse = true;
+//    var courseID = $('#studentAdd').attr('data-courseID');
+//    var courseTitle = $('#studentAdd').attr('data-course-title');
+//    var year = $('#studentAdd').attr('data-offer-year');
+//    var deptName = $('#studentAdd').attr('data-dept-name');
+//    var deptID = $('#studentAdd').attr('data-dept-id');
+//    var courseObjectID = $('#studentAdd').attr('data-obj-id');
+//  } else {
+//    enrollCourse = false;
+//  }
   $('#studentAdd').removeAttr('data-enroll')
           .removeAttr('data-courseID')
           .removeAttr('data-course-title')
@@ -161,22 +161,22 @@ function addStudent() {
       'dob': dob
     };
     newUser = newUserInfo;
-    // for new enrollment
-    if (enrollCourse) {
-      var newEnrollDate = new Date();
-      var enrollInfo = {"studentID": studentID,
-        "studentName": studentName,
-        "dob": dob,
-        "courseID": courseID,
-        "deptName": deptName,
-        "title": courseTitle,
-        "year": year,
-        "enrolDate": newEnrollDate,
-        "deptID": deptID,
-        "enrolledCourseID": courseObjectID
-      };
-      newUser = enrollInfo;
-    }
+//    // for new enrollment
+//    if (enrollCourse) {
+//      var newEnrollDate = new Date();
+//      var enrollInfo = {"studentID": studentID,
+//        "studentName": studentName,
+//        "dob": dob,
+//        "courseID": courseID,
+//        "deptName": deptName,
+//        "title": courseTitle,
+//        "year": year,
+//        "enrolDate": newEnrollDate,
+//        "deptID": deptID,
+//        "enrolledCourseID": courseObjectID
+//      };
+//      newUser = enrollInfo;
+//    }
     // add student
     $.ajax({
       type: 'POST',
@@ -186,51 +186,58 @@ function addStudent() {
     }).done(function (response) {
       // Check for successful (blank) response
       if (response.msg === '') {
-        studentSuccess = true;
+        //studentSuccess = true;
+        populateStudent();
+        // Clear the form inputs
+        $('#studentAdd fieldset input').val('');
+        // Update the table
+        closeOverlay('studentAdd');
+      } else {
+        alert('Error: ' + response.msg);
       }
       // update course
-      if (enrollCourse && studentSuccess) {
-        console.log('enter enroll update');
-        var updateQuery = {
-          "courseID": courseID,
-          "year": year,
-          "studentID": studentID,
-          "enrolDate": newEnrollDate
-        };
-        $.ajax({
-          type: 'POST',
-          data: updateQuery,
-          url: '/courses/enrollCourse',
-          dataType: 'JSON'
-        }).done(function (responseEnrol) {
-          // Check for successful (blank) response
-          if (responseEnrol.msg === '') {
-            enrollSuccess = true;
-          }
-          if (enrollSuccess) {
-            // reload page
-            populateCourse();
-            // Clear the form inputs
-            $('#studentAdd fieldset input').val('');
-            // Update the table
-            closeOverlay('studentAdd');
-          } else {
-            alert('Error: ' + responseEnrol.msg);
-          }
-        });
-      } else {
-        if (studentSuccess) {
-          // reload page
-          populateStudent();
-          // Clear the form inputs
-          $('#studentAdd fieldset input').val('');
-          // Update the table
-          closeOverlay('studentAdd');
-        } else {
-          console.log('why!!');
-          alert('Error: ' + response.msg);
-        }
-      }
+//      if (enrollCourse && studentSuccess) {
+//        console.log('enter enroll update');
+//        var updateQuery = {
+//          "courseID": courseID,
+//          "year": year,
+//          "studentID": studentID,
+//          "enrolDate": newEnrollDate
+//        };
+//        $.ajax({
+//          type: 'POST',
+//          data: updateQuery,
+//          url: '/courses/enrollCourse',
+//          dataType: 'JSON'
+//        }).done(function (responseEnrol) {
+//          // Check for successful (blank) response
+//          if (responseEnrol.msg === '') {
+//            enrollSuccess = true;
+//          }
+//          if (enrollSuccess) {
+//            // reload page
+//            populateCourse();
+//            // Clear the form inputs
+//            $('#studentAdd fieldset input').val('');
+//            // Update the table
+//            closeOverlay('studentAdd');
+//          } else {
+//            alert('Error: ' + responseEnrol.msg);
+//          }
+//        });
+//      } else {
+//        if (studentSuccess) {
+//          // reload page
+//          populateStudent();
+//          // Clear the form inputs
+//          $('#studentAdd fieldset input').val('');
+//          // Update the table
+//          closeOverlay('studentAdd');
+//        } else {
+//          console.log('why!!');
+//          alert('Error: ' + response.msg);
+//        }
+      // }
     });
   } else {
     // If errorCount is more than 0, error out
