@@ -2,7 +2,7 @@
 #deptList.listPanel
   .filter
     .actionBar
-      a#addDept(href="#")
+      a#addDept(href="#", class="overlayLink", data-overlay="deptAdd")
         span(class="glyphicon glyphicon-plus")
         span Add Department
   table.table
@@ -11,6 +11,6 @@
       th Department
       th Loaction
       th No. of Courses
-      th(colspan="3")
+      th(colspan="2")
     tbody
 // /DEPT LIST

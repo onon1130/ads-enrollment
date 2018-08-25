@@ -38,6 +38,8 @@ $(document).ready(function () {
       return false;
     }
   });
+  // delete student
+  $(document.body).on('click', '.deleteStudent', deleteStudent);
 });
 
 // Functions =============================================================
@@ -84,7 +86,7 @@ function populateStudent(studentName) {
       tableContent += '<td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' + this.studentName + '</td>';
       tableContent += '<td>' + formatDate(this.dob) + '</td>';
       tableContent += '<td class="trigger-btn"><a href="#" class="updateStudent" data-studentName="' + this.studentName + '" data-studentID="' + thisStudentID + '" data-dob="' + formatDate(this.dob) + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td class="trigger-btn"><a href="#" class="deleteStudent" rel="' + thisID + '" data-enrolled="' + enrolledCount + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="deleteStudent" data-studentID="' + thisStudentID + '" data-enrolled="' + enrolledCount + '" rel="' + this._id + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
 
       enrolledCount = 0;
       if (this.enrolled && this.enrolled.length > 0) {
@@ -280,6 +282,45 @@ function updateStudent(studentID, studentName, dob) {
     // If errorCount is more than 0, error out
     alert('Please fill in all fields');
     return false;
+  }
+
+}
+// Delete Student
+function deleteStudent(event) {
+
+  event.preventDefault();
+  //var studentID = $(this).attr('data-studentID');
+  var enrolled = parseInt($(this).attr('data-enrolled'));
+  console.log('enrolled:' + enrolled);
+  if (enrolled === 0) {
+    console.log('delete student:' + enrolled);
+    // Pop up a confirmation dialog
+    var confirmation = confirm('Are you sure you want to delete this student?');
+    // Check and make sure the user confirmed
+    if (confirmation === true) {
+
+      // If they did, do our delete
+      $.ajax({
+        type: 'DELETE',
+        url: '/courses/deleteStudent/' + $(this).attr('rel')
+      }).done(function (response) {
+
+        // Check for a successful (blank) response
+        if (response.msg === '') {
+        } else {
+          alert('Error: ' + response.msg);
+        }
+
+        // Update the table
+        populateStudent();
+      });
+    } else {
+
+      // If they said no to the confirm, do nothing
+      return false;
+    }
+  } else {
+    alert('Student cannot be deleted with class enrolled.');
   }
 
 }

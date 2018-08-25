@@ -1,0 +1,23 @@
+// ADD STUDENT ENROLLED LIST
+#deptEdit.overlay-black.overlay
+  .overlay-black-box
+    a.closeOverlay(href="#") 
+      span(class="glyphicon glyphicon-remove-circle")
+      span Close
+    h3.newTitle Add New Department
+    fieldset.add
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editdeptID") Department ID:
+        .col-sm-10
+          input#editdeptID.form-control(type='text', placeholder='Department ID', disabled="disabled")
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editdeptName") Department Name:
+        .col-sm-10
+          input#editdeptName.form-control(type='text', placeholder='Department Name')
+      .form-group.row
+        label.col-sm-2.col-form-label(for="editlocation") Location:
+        .col-sm-10
+          input#editlocation.form-control(type='text', placeholder='Location')
+      .form-group.form-action
+        button#btnEditDept.btn.btn-primary Update
+// /ADD STUDENT ENROLLED LIST

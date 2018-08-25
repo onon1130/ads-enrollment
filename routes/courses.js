@@ -349,7 +349,16 @@ router.delete('/deleteCourse/:id', function (req, res) {
     res.send((err === null) ? {msg: ''} : {msg: 'error: ' + err});
   });
 });
-module.exports = router;
+/* DELETE to deleteuser. */
+router.delete('/deleteStudent/:id', function (req, res) {
+  var db = req.db;
+  var collection = db.get('student');
+  var userToDelete = req.params.id;
+  collection.remove({'_id': userToDelete}, function (err) {
+    res.send((err === null) ? {msg: ''} : {msg: 'error: ' + err});
+  });
+});
+
 
 /* POST to update student info. */
 router.post('/updateStudentInfo', function (req, res) {
@@ -369,3 +378,53 @@ router.post('/updateStudentInfo', function (req, res) {
     );
   });
 });
+
+/* POST to add dept. */
+router.post('/addDept', function (req, res) {
+  var db = req.db;
+  var collection = db.get('dept');
+  var query = {};
+  var getQuery = req.body;
+  var deptID = getQuery.deptID;
+  var deptName = getQuery.deptName;
+  var location = getQuery.location;
+
+  query = {"deptID": deptID,
+    "deptName": deptName,
+    "location": location,
+    "courseid":[]};
+  collection.insert(query, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
+/* POST to update dept. */
+router.post('/updateDeptInfo', function (req, res) {
+  var db = req.db;
+  var collection = db.get('dept');
+  var getQuery = req.body;
+  var deptID = getQuery.deptID;
+  var deptName = getQuery.deptName;
+  var location = getQuery.location;
+
+  
+  var findQuery = {"deptID": deptID};
+  var updateQuery = {$set: {"deptName": deptName,
+      "location": location}};
+  collection.update(findQuery, updateQuery, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
+/* DELETE to delete dept. */
+router.delete('/deleteDept/:id', function (req, res) {
+  var db = req.db;
+  var collection = db.get('dept');
+  var userToDelete = req.params.id;
+  collection.remove({'_id': userToDelete}, function (err) {
+    res.send((err === null) ? {msg: ''} : {msg: 'error: ' + err});
+  });
+});
+module.exports = router;
