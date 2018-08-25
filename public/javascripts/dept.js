@@ -92,7 +92,7 @@ function addDept() {
       if (response.msg === '') {
 
         populateDept();
-
+        listDeptSelect();
         $('#deptAdd fieldset input').val('');
         // Update the table
         closeOverlay('deptAdd');
@@ -139,7 +139,7 @@ function updateDeptInfo() {
       if (response.msg === '') {
 
         populateDept();
-
+        listDeptSelect();
         $('#deptEdit fieldset input').val('');
         // Update the table
         closeOverlay('deptEdit');
@@ -182,6 +182,7 @@ function deleteDept(event) {
 
         // Update the table
         populateDept();
+        listDeptSelect();
       });
     } else {
 
