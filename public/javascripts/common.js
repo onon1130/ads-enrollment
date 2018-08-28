@@ -7,6 +7,7 @@ var studentListData = [];
 $(document).ready(function () {
   listDeptSelect();
   populateCourse();
+  listDeptSelectMulti();
   // tab actions
   $(document.body).on('click', '.list-tabs a', function (e) {
     e.preventDefault();
@@ -42,6 +43,31 @@ $(document).ready(function () {
     e.preventDefault();
     closeOverlay();
   });
+//  $(document.body).on('click','.dropdown-menu'), function (e) {
+//    e.preventDefault();
+//    e.stopPropagation();
+//  };
+ $(document.body).on('click', '.dropdown-toggle', function (e) {
+  $(this).next().toggle();
+});
+$(document.body).on('click', '.close-dropdown', function (e) {
+  $(this).parents('.dropdown-menu').toggle();
+});
+$(document.body).on('click', '.dropdown-menu.keep-open', function (e) {
+  e.stopPropagation();
+});
+
+
+//  $(document.body).on('click', '.keep-open', function (e) {
+//    if (/input|label/i.test(e.target.tagName)) {
+//      var parent = $(e.target).parent();
+//      if (parent.hasClass('checkbox')) {
+//        var checkbox = parent.find('input[type=checkbox]');
+//        checkbox.prop("checked", !checkbox.prop("checked"));
+//        return false;
+//      }
+//    }
+//  });
 });
 
 // Functions =============================================================
@@ -101,6 +127,29 @@ function listDeptSelect() {
       $.each(data, function () {
         selectOption += '<option value="' + this.deptID + '">' + this.deptName + '</option>';
       });
+      $thisSelect.html(selectOption);
+    });
+  });
+}
+function listDeptSelectMulti() {
+
+
+  $('.deptlistdropdown').each(function (index) {
+    var $thisSelect = $(this);
+    $thisSelect.html('');
+    var selectOption = '';
+    var thisID = $thisSelect.attr('id');
+    var dept_num = 0;
+    //selectOption += '<li class="checkbox keep-open"><label><input type="checkbox" checked="checked" value="all" name="course-dept-multi" /><span>All</span></label></li>';
+    $.getJSON('/courses/deptlist', function (data) {
+      deptListData = data;
+      
+      $.each(data, function () {
+        dept_num++;
+        selectOption += '<li class="checkbox keep-open"><label><input type="checkbox" checked="checked" value="' + this.deptID + '" name="course-dept-multi" /><span>' + this.deptName + '</span></label></li>';
+      });
+      selectOption += '<li><a href="#" class="btn close-dropdown">Done</a></li>';
+      $('.deptlistdropdown').attr('data-dept-num',dept_num);
       $thisSelect.html(selectOption);
     });
   });

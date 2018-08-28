@@ -17,9 +17,17 @@
           option(value="2019") 2019
           option(value="2020") 2020
     .filterBlock
-      span Department:
-      span
-        select.form-control.deptlistselect#course-dept
+      //span Department:
+      //span
+      //  select.form-control.deptlistselect#course-dept
+      
+      .dropdown
+        button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Department
+          span.caret
+        ul.dropdown-menu.deptlistdropdown#course-dept-multi
+      span.form-group
+        
+        button#course-filter-trigger.btn.btn-default(type="button") Apply 
   table.table
     thead
       th ID

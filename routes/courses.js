@@ -7,9 +7,61 @@ router.post('/courselist', function (req, res) {
   var db = req.db;
   var collection = db.get('course');
   var query = {};
-  if (req.body) {
-    query = req.body;
+  var getQuery = req.body;
+  var deptIDNew = [];
+
+  var year = getQuery.year;
+  var deptall = getQuery.deptall;
+  var deptID = getQuery.deptID;
+  var deptID2 = getQuery.deptID2;
+  var deptID3 = getQuery.deptID3;
+  var deptID4 = getQuery.deptID4;
+  if (deptall === 'false') {
+    if (deptID !== 'false') {
+      deptIDNew.push(deptID);
+    }
+    if (deptID2 !== 'false') {
+      deptIDNew.push(deptID2);
+    }
+    if (deptID3 !== 'false') {
+      deptIDNew.push(deptID3);
+    }
+    if (deptID4 !== 'false') {
+      deptIDNew.push(deptID4);
+    }
+    query = {'dept.deptID': {$in: deptIDNew}};
+    if (year !== 'false') {
+      query = {'dept.deptID': {$in: deptIDNew}, 'offer.year': year};
+    }
+  } else {
+
+
+    if (year !== 'false') {
+      var yearQuery = {'offer.year': year};
+    }
+
   }
+//  var deptIDNew = getQuery.deptID;
+  //var deptIDNew = [];
+  //var deptIDNew = $.makeArray( deptID );
+//  if (deptIDNew) {
+//  var deptID = deptIDNew;
+//   deptID = deptID.replace('[', '');
+//   deptID = deptID.replace(']', '');
+//  var deptIDArray = deptIDNew.split(',');
+
+  // $mylabel.text( $mylabel.text().replace('-', '') );
+
+  //}
+//  if (req.body) {
+//    query = req.body;
+//  }
+//  if (deptID){
+//   query = {'dept.deptID': deptID };
+//  }
+//  if (year !== null){
+//  $.extend(query, {'offer.year': year});
+//  }
   collection.find(query, function (err, docs) {
     if (err)
       return err;
@@ -392,7 +444,7 @@ router.post('/addDept', function (req, res) {
   query = {"deptID": deptID,
     "deptName": deptName,
     "location": location,
-    "courseid":[]};
+    "courseid": []};
   collection.insert(query, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}
@@ -408,7 +460,7 @@ router.post('/updateDeptInfo', function (req, res) {
   var deptName = getQuery.deptName;
   var location = getQuery.location;
 
-  
+
   var findQuery = {"deptID": deptID};
   var updateQuery = {$set: {"deptName": deptName,
       "location": location}};

@@ -2,9 +2,14 @@
 // DOM Ready =============================================================
 $(document).ready(function () {
   //action course filter
-  $(document.body).on('change', '#course-year, #course-dept', function (e) {
-    console.log('change!');
+//  $(document.body).on('change', '#course-year, #course-dept', function (e) {
+//    console.log('change!');
+//    populateCourse();
+//  });
+  $(document.body).on('click', '#course-filter-trigger', function (e) {
+    e.preventDefault();
     populateCourse();
+    $('#course-dept-multi').hide();
   });
   //Show search student to enroll
   $(document.body).on('click', 'a.courseEnroll', function (e) {
@@ -233,29 +238,96 @@ function populateCourse() {
   var query = {};
   var year;
   var deptID;
+  var deptID2;
+  var deptID3;
+  var deptID4;
+  deptID = 'false';
+  deptID2 = 'false';
+  deptID3 = 'false';
+  deptID4 = 'false';
   year = $('#course-year').val();
-  deptID = $('#course-dept').val();
-  console.log('deptID:' + deptID);
-  console.log('year:' + year);
+  //deptID = $('#course-dept').val();
+  //deptID = $('#course-dept-multi checkbox').val();
+  var deptID = [];
+  var deptNum = false;
+  var depNumTotal = parseInt($('#course-dept-multi').attr('data-dept-num'));
+  $('#course-dept-multi').find('input[type=checkbox]:checked').each(function () {
+    //  deptID.push($(this).val());
+    deptNum = true;
 
-  if (year !== 'all') {
-    var yearQuery = {'offer.year': year};
-    $.extend(query, yearQuery);
+  });
+  if ($('#course-dept-multi').find('input[type=checkbox]:eq(0)').is(':checked')) {
+    deptID = $('#course-dept-multi').find('input[type=checkbox]:eq(0)').val();
+    console.log('deptID:' + deptID);
   }
-  if (deptID !== 'all' && deptID !== null) {
+  if ($('#course-dept-multi').find('input[type=checkbox]:eq(1)').is(':checked')) {
+    var deptID2 = $('#course-dept-multi').find('input[type=checkbox]:eq(1)').val();
+    console.log('deptID2:' + deptID2);
+  }
+  if ($('#course-dept-multi').find('input[type=checkbox]:eq(2)').is(':checked')) {
+    var deptID3 = $('#course-dept-multi').find('input[type=checkbox]:eq(2)').val();
+    console.log('deptID3:' + deptID3);
+  }
+  if ($('#course-dept-multi').find('input[type=checkbox]:eq(3)').is(':checked')) {
+    var deptID4 = $('#course-dept-multi').find('input[type=checkbox]:eq(3)').val();
+    console.log('deptID4:' + deptID4);
+  }
+  ;
+  //  return false;
+//deptID = $('#course-dept-multi').find('input[type=checkbox]').val();
+//  console.log('deptID:' + deptID);
+//  console.log('deptID:' + deptID);
+//  console.log('year:' + year);
+  if (year === 'all') {
 
-    var deptQuery = {'dept.deptID': deptID};
+    year = "false";
+
+  }
+  var yearQuery = {'year': year};
+  //  var yearQuery = {'year': year};
+  $.extend(query, yearQuery);
+
+  var deptQuery;
+  if (deptNum) {
+    //var deptQuery = {'dept.deptID': { $in: deptID }};
+
+    console.log('yes');
+    deptQuery = {'deptall': 'false', 'deptID': deptID, 'deptID2': deptID2, 'deptID3': deptID3, 'deptID4': deptID4};
     $.extend(query, deptQuery);
-
+  } else {
+    deptQuery = {'deptall': 'true'};
+    $.extend(query, deptQuery);
+    console.log('all dept');
   }
+//  if (deptID !== 'all' && deptID !== null) {
+//
+//    var deptQuery = {'dept.deptID': deptID};
+//    $.extend(query, deptQuery);
+//
+//  }
+//if (depNumTotal !== deptNum) {
+//  var deptQuery = {'deptID[1]': deptID[1]};
+//  for (i = 0; i < deptNum.length; i++) { 
+// 
+//    $.extend(query, deptQuery);
+//}
+
+//}
+// var deptQuery = {'dept.deptID': { $in: deptID }};
+
+//  $.extend(query, deptQuery);
+//}
+
   var url = '/courses/courselist';
   $.ajax({
     type: 'POST',
     data: query,
     url: url,
-    dataType: 'JSON'
+    dataType: 'JSON',
+    contentType: "application/x-www-form-urlencoded"
   }).done(function (data) {
     couseListData = data;
+    var totalNumStudent=0;
     $.each(data, function () {
       var thisID = this._id;
       var courseID = this.courseid;
@@ -304,16 +376,16 @@ function populateCourse() {
               var vancanyclass = "none";
               if (availablePercent < 100 && availablePercent > 65) {
                 progressCSS = "info";
-                
+
               } else if (availablePercent <= 65 && availablePercent > 20) {
                 progressCSS = "warning";
-                
+
               } else if (availablePercent <= 20) {
                 progressCSS = "danger";
                 vancanyclass = "full";
               }
               var enrolledPercent = 100 - availablePercent;
-              if (vancancy ===0 ){
+              if (vancancy === 0) {
                 vancancy = "<strong>FULL</strong>";
               }
               tableContent += '<td class="progressbar"><a href="#" class="studentEnrolled overlayLink"  data-overlay="studentEnrolled" data-offer-year="' + thisOffer.year + '" data-id="' + courseID + '"><strong>' + enrolledStudent + '</strong> / ' + thisOffer.classSize + ' <span class="glyphicon glyphicon-user" aria-hidden="true"></span> (' + enrolledPercent + '%) <div class="progress">';
@@ -323,6 +395,7 @@ function populateCourse() {
               tableContent += '<td class="trigger-btn"><a href="#" class="offerDelete" data-offer-year="' + thisOffer.year + '" data-courseID="' + courseID + '" data-enrolled-student="' + (thisOffer.classSize - thisOffer.available) + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
               tableContent += '<td class="trigger-btn"><a href="#" class="courseEnroll" data-course-title="' + thisTitle + '" data-offer-year="' + thisOffer.year + '" data-dept-name="' + thisDeptName + '" data-dept-id="' + thisDeptID + '" data-obj-id="' + thisID + '" data-courseID="' + courseID + '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Enroll</a></td>';
               offerCount++;
+              totalNumStudent = totalNumStudent + enrolledStudent;
             }
           });
         } else {
@@ -333,7 +406,10 @@ function populateCourse() {
         tableContent += '<td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>';
       }
       tableContent += '</tr>';
+      
+      
     });
+    tableContent += '<tr class="totalrow"><td colspan="8" class="totalTitle">Total no. of student Enrolled: </td><td class="totalNum">'+totalNumStudent+'</td><td colspan="4" class="totalNum"></td></tr>';
     $('#courseList table tbody').html(tableContent);
   });
 }
