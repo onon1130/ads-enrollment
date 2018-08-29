@@ -157,8 +157,8 @@ router.post('/addCourse', function (req, res) {
   var level = getQuery.level;
   var deptID = getQuery.deptID;
   var deptName = getQuery.deptName;
-  var classSize = getQuery.classSize;
-  var available = classSize;
+  var classSize = parseInt(getQuery.classSize);
+  var available = parseInt(classSize);
   query = {"courseid": courseID,
     "dept": {
       "deptID": deptID,
@@ -170,7 +170,7 @@ router.post('/addCourse', function (req, res) {
         "year": year,
         "classSize": classSize,
         "available": available,
-        "enrolled": null
+        "enrolled": []
       }]
   };
   collection.insert(query, function (err, result) {
@@ -464,6 +464,22 @@ router.post('/updateDeptInfo', function (req, res) {
   var findQuery = {"deptID": deptID};
   var updateQuery = {$set: {"deptName": deptName,
       "location": location}};
+  collection.update(findQuery, updateQuery, function (err, result) {
+    res.send(
+            (err === null) ? {msg: ''} : {msg: err}
+    );
+  });
+});
+
+/* POST to update course dept info. */
+router.post('/updateCourseDeptInfo', function (req, res) {
+  var db = req.db;
+  var collection = db.get('course');
+  var getQuery = req.body;
+  var deptID = getQuery.deptID;
+  var deptName = getQuery.deptName;
+  var findQuery = {"dept.deptID": deptID};
+  var updateQuery = {$set: {"dept.deptName": deptName}};
   collection.update(findQuery, updateQuery, function (err, result) {
     res.send(
             (err === null) ? {msg: ''} : {msg: err}

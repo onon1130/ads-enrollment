@@ -3,7 +3,7 @@ $(document).ready(function () {
 
 // show add student form
   $(document.body).on('click', '#btnAddDept', addDept);
-  
+
   //action show edit dept
   $(document.body).on('click', 'a.updateDept', function (e) {
     e.preventDefault();
@@ -14,7 +14,7 @@ $(document).ready(function () {
     console.log('studentID:' + deptID);
     console.log('deptName:' + deptName);
     console.log('location:' + location);
-    
+
     $('#editdeptID').val(deptID);
     $('#editdeptName').val(deptName);
     $('#editlocation').val(location);
@@ -22,7 +22,7 @@ $(document).ready(function () {
   });//action update student
   $(document.body).on('click', '#btnEditDept', function (e) {
     e.preventDefault();
-    
+
     var deptID = $('#editdeptID').val();
     var deptName = $('#editdeptName').val();
     var location = $('#editlocation').val();
@@ -53,8 +53,8 @@ function populateDept() {
       tableContent += '<td>' + this.deptName + '</td>';
       tableContent += '<td>' + this.location + '</td>';
       tableContent += '<td>' + this.numberOfCourse + '</td>';
-      tableContent += '<td class="trigger-btn"><a href="#" class="updateDept" data-deptID="' + this.deptID + '" data-deptName="' + this.deptName + '" data-location="' + this.location + '" data-coursenum="'+this.numberOfCourse+'" rel="' + this._ID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
-      tableContent += '<td class="trigger-btn"><a href="#" class="deleteDept" data-deptID="' + this.deptID + '" data-coursenum="'+this.numberOfCourse+'" rel="' + thisID+ '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="updateDept" data-deptID="' + this.deptID + '" data-deptName="' + this.deptName + '" data-location="' + this.location + '" data-coursenum="' + this.numberOfCourse + '" rel="' + this._ID + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></td>';
+      tableContent += '<td class="trigger-btn"><a href="#" class="deleteDept" data-deptID="' + this.deptID + '" data-coursenum="' + this.numberOfCourse + '" rel="' + thisID + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a></td>';
       tableContent += '</tr>';
     });
     // Inject the whole content string into our existing HTML table
@@ -136,13 +136,26 @@ function updateDeptInfo() {
       dataType: 'JSON'
     }).done(function (response) {
       // Check for successful (blank) response
+
       if (response.msg === '') {
 
-        populateDept();
-        listDeptSelect();
-        $('#deptEdit fieldset input').val('');
-        // Update the table
-        closeOverlay('deptEdit');
+        $.ajax({
+          type: 'POST',
+          data: newDept,
+          url: '/courses/updateCourseDeptInfo',
+          dataType: 'JSON'
+        }).done(function (response) {
+          if (response.msg === '') {
+
+            populateDept();
+            listDeptSelect();
+            $('#deptEdit fieldset input').val('');
+            // Update the table
+            closeOverlay('deptEdit');
+          } else {
+            alert('Error: ' + response.msg);
+          }
+        });
       } else {
         alert('Error: ' + response.msg);
       }
@@ -154,6 +167,7 @@ function updateDeptInfo() {
     return false;
   }
 }
+
 // Delete Dept
 function deleteDept(event) {
 
